@@ -1,2 +1,3 @@
-# py-celery-sqlalchemy
-SQLAlchemy model serialization for celery tasks.
+# celery-sqlalchemy
+
+SQLAlchemy model serialization for celery.
