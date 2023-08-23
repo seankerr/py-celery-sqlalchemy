@@ -8,12 +8,16 @@ from .model import schema_for_model_path
 from .model import schema_map_key
 
 # system imports
+from datetime import date
 from datetime import datetime
+from datetime import time
 
 from typing import Any
 from typing import Dict
 from typing import List
 from typing import Union
+
+from uuid import UUID
 
 import sys
 
@@ -28,7 +32,8 @@ from sqlalchemy import inspect
 
 import orjson
 
-json_module_key = ""
+json_module_key = "$model_path$"
+orjson_opts = 0
 
 
 def arg_from_json(arg: Any) -> Any:
@@ -39,18 +44,14 @@ def arg_from_json(arg: Any) -> Any:
         arg (object): Any object type.
     """
     if isinstance(arg, dict) and json_module_key in arg:
-        try:
-            schema = schema_for_model_path(arg[json_module_key], sys.modules[__name__])
+        schema = schema_for_model_path(arg[json_module_key], sys.modules[__name__])
 
-            return schema.model(
-                **{
-                    field.name: field.value_in(arg.get(field.name))
-                    for field in schema.fields
-                }
-            )
-
-        except KeyError:
-            return arg
+        return schema.model(
+            **{
+                field.name: field.value_in(arg.get(field.name))
+                for field in schema.fields
+            }
+        )
 
     else:
         return arg
@@ -78,24 +79,38 @@ def arg_to_json(arg: Any) -> Any:
 
             return json
 
-        except (KeyError, NoInspectionAvailable):
+        except NoInspectionAvailable:
             return arg
 
     else:
         return arg
 
 
-def initialize(celery: Celery, json_key: str = "$model_path$") -> None:
+def initialize(
+    celery: Celery,
+    json_key: str = "$model_path$",
+    naive_utc: bool = True,
+    utc_z: bool = True,
+) -> None:
     """
     Initialize the JSON module.
 
     Parameters:
         celery (Celery): Celery instance.
         json_key (str): The key used to store the model path during serialization.
+        naive_utc (bool): Enable orjson OPT_NAIVE_UTC.
+        utc_z (bool): Enable orjson OPT_UTC_Z.
     """
     global json_module_key
+    global orjson_opts
 
     json_module_key = json_key
+
+    if naive_utc:
+        orjson_opts |= orjson.OPT_NAIVE_UTC
+
+    if utc_z:
+        orjson_opts |= orjson.OPT_UTC_Z
 
     celery.conf.accept_content = ["json+sqlalchemy"]
     celery.conf.result_accept_content = ["json+sqlalchemy"]
@@ -116,9 +131,7 @@ def message_from_args(args: Union[str, Dict[str, Any], List[Any]]) -> bytes:
     Parameters:
         args (dict): Task arguments.
     """
-    return orjson.dumps(
-        args, default=arg_to_json, option=orjson.OPT_NAIVE_UTC | orjson.OPT_UTC_Z
-    )
+    return orjson.dumps(args, default=arg_to_json, option=orjson_opts)
 
 
 def message_to_args(
@@ -179,7 +192,7 @@ def boolean_out(value: Any) -> Any:
 
 
 def date_in(value: Any) -> Any:
-    return value
+    return date.fromisoformat(value)
 
 
 def date_out(value: Any) -> Any:
@@ -286,7 +299,7 @@ def text_out(value: Any) -> Any:
 
 
 def time_in(value: Any) -> Any:
-    return value
+    return time.fromisoformat(value)
 
 
 def time_out(value: Any) -> Any:
@@ -310,7 +323,7 @@ def unicode_text_out(value: Any) -> Any:
 
 
 def uuid_in(value: Any) -> Any:
-    return value
+    return UUID(value)
 
 
 def uuid_out(value: Any) -> Any:
