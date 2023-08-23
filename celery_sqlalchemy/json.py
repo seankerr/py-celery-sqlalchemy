@@ -8,10 +8,14 @@ from .model import schema_for_model_path
 from .model import schema_map_key
 
 # system imports
+from datetime import datetime
+
 from typing import Any
 from typing import Dict
 from typing import List
 from typing import Union
+
+import sys
 
 # dependency imports
 from celery import Celery
@@ -36,11 +40,11 @@ def arg_from_json(arg: Any) -> Any:
     """
     if isinstance(arg, dict) and json_module_key in arg:
         try:
-            schema = schema_for_model_path(arg[json_module_key])
+            schema = schema_for_model_path(arg[json_module_key], sys.modules[__name__])
 
             return schema.model(
                 **{
-                    field.name: field.value_in(arg.get(field))
+                    field.name: field.value_in(arg.get(field.name))
                     for field in schema.fields
                 }
             )
@@ -61,8 +65,9 @@ def arg_to_json(arg: Any) -> Any:
     """
     if hasattr(arg, "__table__"):
         try:
-            mapper = inspect(arg)
-            schema = schema_for_model(arg, mapper)
+            instance_state = inspect(arg)
+            mapper = instance_state.mapper
+            schema = schema_for_model(arg, mapper, sys.modules[__name__])
 
             json = {
                 field.name: field.value_out(getattr(arg, field.name))
@@ -92,12 +97,8 @@ def initialize(celery: Celery, json_key: str = "$model_path$") -> None:
 
     json_module_key = json_key
 
-    celery.conf.accept_content = ["json+sqlalchemy"] + celery.conf.accept_content
-
-    celery.conf.result_accept_content = [
-        "json+sqlalchemy"
-    ] + celery.conf.result_accept_content
-
+    celery.conf.accept_content = ["json+sqlalchemy"]
+    celery.conf.result_accept_content = ["json+sqlalchemy"]
     celery.conf.task_serializer = "json+sqlalchemy"
 
     serialization.register(
@@ -186,7 +187,10 @@ def date_out(value: Any) -> Any:
 
 
 def date_time_in(value: Any) -> Any:
-    return value
+    if value is None:
+        return None
+
+    return datetime.fromisoformat(value)
 
 
 def date_time_out(value: Any) -> Any:
