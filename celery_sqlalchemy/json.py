@@ -115,6 +115,7 @@ def initialize(
     global orjson_opts
 
     json_module_key = json_key
+    orjson_opts = 0
 
     if naive_utc:
         orjson_opts |= orjson.OPT_NAIVE_UTC
