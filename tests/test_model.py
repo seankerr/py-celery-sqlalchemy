@@ -81,7 +81,7 @@ def test_map_model(type: type) -> None:
 
     schema = map_model(model, mapper, format_module)
 
-    params.assert_called_with(column.type)
+    params.assert_called_with(column)
 
     assert schema.fields == [
         Field(
