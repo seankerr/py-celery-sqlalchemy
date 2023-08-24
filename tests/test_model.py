@@ -3,7 +3,6 @@
 # --------------------------------------------------------------------------------------
 
 # celery-sqlalchemy types
-from celery_sqlalchemy.model import TypeMap
 from celery_sqlalchemy.model import add_schema
 from celery_sqlalchemy.model import load_model
 from celery_sqlalchemy.model import map_model
@@ -13,6 +12,7 @@ from celery_sqlalchemy.model import schema_map_key
 from celery_sqlalchemy.model import type_maps
 
 from celery_sqlalchemy.schema import Field
+from celery_sqlalchemy.schema import TypeMap
 
 # system imports
 from typing import Any
