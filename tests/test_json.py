@@ -157,8 +157,10 @@ def test_message_to_args(orjson: Mock, arg_from_json: Mock) -> None:
     assert data[1]["name"] == arg_from_json()
 
 
+@patch(f"{PATH}.enumerate")
 @patch(f"{PATH}.orjson")
-def test_message_to_args__celery_message(orjson: Mock) -> None:
+def test_message_to_args__celery_message(orjson: Mock, enumerate: Mock) -> None:
+    enumerate.side_effect = KeyError()
     message = Mock()
 
     assert json.message_to_args(message) == orjson.loads.return_value
@@ -206,7 +208,7 @@ def test_biginteger_to_json() -> None:
     field = Mock()
     value = Mock()
 
-    assert json.biginteger_from_json(field, value) == value
+    assert json.biginteger_to_json(field, value) == value
 
 
 def test_boolean_from_json() -> None:
