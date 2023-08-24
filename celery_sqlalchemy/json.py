@@ -505,6 +505,54 @@ def postgresql_array_to_json(
     return value
 
 
+def postgresql_bit_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_bit_params(column: Column) -> Any:
+    return
+
+
+def postgresql_bit_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_bytea_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_bytea_params(column: Column) -> Any:
+    return
+
+
+def postgresql_bytea_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_cidr_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_cidr_params(column: Column) -> Any:
+    return
+
+
+def postgresql_cidr_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_citext_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_citext_params(column: Column) -> Any:
+    return
+
+
+def postgresql_citext_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
 def postgresql_daterange_from_json(
     field: Field, value: Optional[List[Any]]
 ) -> Optional[List[Any]]:
@@ -534,6 +582,18 @@ def postgresql_datemultirange_params(column: Column) -> Any:
 def postgresql_datemultirange_to_json(
     field: Field, value: Optional[List[Any]]
 ) -> Optional[List[Any]]:
+    return value
+
+
+def postgresql_domain_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_domain_params(column: Column) -> Any:
+    return
+
+
+def postgresql_domain_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 
@@ -617,6 +677,30 @@ def postgresql_int8multirange_to_json(
     return value
 
 
+def postgresql_inet_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_inet_params(column: Column) -> Any:
+    return
+
+
+def postgresql_inet_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_interval_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_interval_params(column: Column) -> Any:
+    return
+
+
+def postgresql_interval_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
 def postgresql_json_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
@@ -653,6 +737,42 @@ def postgresql_jsonpath_to_json(field: Field, value: Optional[Any]) -> Optional[
     return value
 
 
+def postgresql_macaddr_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_macaddr_params(column: Column) -> Any:
+    return
+
+
+def postgresql_macaddr_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_macaddr8_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_macaddr8_params(column: Column) -> Any:
+    return
+
+
+def postgresql_macaddr8_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_money_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_money_params(column: Column) -> Any:
+    return
+
+
+def postgresql_money_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
 def postgresql_numrange_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
@@ -678,6 +798,78 @@ def postgresql_nummultirange_params(column: Column) -> Any:
 def postgresql_nummultirange_to_json(
     field: Field, value: Optional[Any]
 ) -> Optional[Any]:
+    return value
+
+
+def postgresql_oid_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_oid_params(column: Column) -> Any:
+    return
+
+
+def postgresql_oid_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_regclass_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_regclass_params(column: Column) -> Any:
+    return
+
+
+def postgresql_regclass_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_regconfig_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_regconfig_params(column: Column) -> Any:
+    return
+
+
+def postgresql_regconfig_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_time_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_time_params(column: Column) -> Any:
+    return
+
+
+def postgresql_time_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_timestamp_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_timestamp_params(column: Column) -> Any:
+    return
+
+
+def postgresql_timestamp_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_tsquery_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_tsquery_params(column: Column) -> Any:
+    return
+
+
+def postgresql_tsquery_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 
@@ -734,4 +926,16 @@ def postgresql_tstzmultirange_params(column: Column) -> Any:
 def postgresql_tstzmultirange_to_json(
     field: Field, value: Optional[Any]
 ) -> Optional[Any]:
+    return value
+
+
+def postgresql_tsvector_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_tsvector_params(column: Column) -> Any:
+    return
+
+
+def postgresql_tsvector_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value

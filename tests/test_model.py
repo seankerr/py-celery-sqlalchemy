@@ -26,23 +26,40 @@ from unittest.mock import patch
 from pytest import mark
 
 from sqlalchemy.dialects.postgresql import ARRAY as POSTGRESQL_ARRAY
+from sqlalchemy.dialects.postgresql import BIT as POSTGRESQL_BIT
+from sqlalchemy.dialects.postgresql import BYTEA as POSTGRESQL_BYTEA
+from sqlalchemy.dialects.postgresql import CIDR as POSTGRESQL_CIDR
+from sqlalchemy.dialects.postgresql import CITEXT as POSTGRESQL_CITEXT
 from sqlalchemy.dialects.postgresql import DATERANGE as POSTGRESQL_DATERANGE
 from sqlalchemy.dialects.postgresql import DATEMULTIRANGE as POSTGRESQL_DATEMULTIRANGE
+from sqlalchemy.dialects.postgresql import DOMAIN as POSTGRESQL_DOMAIN
 from sqlalchemy.dialects.postgresql import ENUM as POSTGRESQL_ENUM
 from sqlalchemy.dialects.postgresql import HSTORE as POSTGRESQL_HSTORE
 from sqlalchemy.dialects.postgresql import INT4RANGE as POSTGRESQL_INT4RANGE
 from sqlalchemy.dialects.postgresql import INT4MULTIRANGE as POSTGRESQL_INT4MULTIRANGE
 from sqlalchemy.dialects.postgresql import INT8RANGE as POSTGRESQL_INT8RANGE
 from sqlalchemy.dialects.postgresql import INT8MULTIRANGE as POSTGRESQL_INT8MULTIRANGE
+from sqlalchemy.dialects.postgresql import INET as POSTGRESQL_INET
+from sqlalchemy.dialects.postgresql import INTERVAL as POSTGRESQL_INTERVAL
 from sqlalchemy.dialects.postgresql import JSON as POSTGRESQL_JSON
 from sqlalchemy.dialects.postgresql import JSONB as POSTGRESQL_JSONB
 from sqlalchemy.dialects.postgresql import JSONPATH as POSTGRESQL_JSONPATH
+from sqlalchemy.dialects.postgresql import MACADDR as POSTGRESQL_MACADDR
+from sqlalchemy.dialects.postgresql import MACADDR8 as POSTGRESQL_MACADDR8
+from sqlalchemy.dialects.postgresql import MONEY as POSTGRESQL_MONEY
 from sqlalchemy.dialects.postgresql import NUMRANGE as POSTGRESQL_NUMRANGE
 from sqlalchemy.dialects.postgresql import NUMMULTIRANGE as POSTGRESQL_NUMMULTIRANGE
+from sqlalchemy.dialects.postgresql import OID as POSTGRESQL_OID
+from sqlalchemy.dialects.postgresql import REGCLASS as POSTGRESQL_REGCLASS
+from sqlalchemy.dialects.postgresql import REGCONFIG as POSTGRESQL_REGCONFIG
+from sqlalchemy.dialects.postgresql import TIME as POSTGRESQL_TIME
+from sqlalchemy.dialects.postgresql import TIMESTAMP as POSTGRESQL_TIMESTAMP
+from sqlalchemy.dialects.postgresql import TSQUERY as POSTGRESQL_TSQUERY
 from sqlalchemy.dialects.postgresql import TSRANGE as POSTGRESQL_TSRANGE
 from sqlalchemy.dialects.postgresql import TSMULTIRANGE as POSTGRESQL_TSMULTIRANGE
 from sqlalchemy.dialects.postgresql import TSTZRANGE as POSTGRESQL_TSTZRANGE
 from sqlalchemy.dialects.postgresql import TSTZMULTIRANGE as POSTGRESQL_TSTZMULTIRANGE
+from sqlalchemy.dialects.postgresql import TSVECTOR as POSTGRESQL_TSVECTOR
 
 from sqlalchemy.sql import sqltypes
 
@@ -256,6 +273,30 @@ def test_schema_map_key() -> None:
             "postgresql_array_to_json",
         ],
         [
+            POSTGRESQL_BIT,
+            "postgresql_bit_from_json",
+            "postgresql_bit_params",
+            "postgresql_bit_to_json",
+        ],
+        [
+            POSTGRESQL_BYTEA,
+            "postgresql_bytea_from_json",
+            "postgresql_bytea_params",
+            "postgresql_bytea_to_json",
+        ],
+        [
+            POSTGRESQL_CIDR,
+            "postgresql_cidr_from_json",
+            "postgresql_cidr_params",
+            "postgresql_cidr_to_json",
+        ],
+        [
+            POSTGRESQL_CITEXT,
+            "postgresql_citext_from_json",
+            "postgresql_citext_params",
+            "postgresql_citext_to_json",
+        ],
+        [
             POSTGRESQL_DATERANGE,
             "postgresql_daterange_from_json",
             "postgresql_daterange_params",
@@ -266,6 +307,12 @@ def test_schema_map_key() -> None:
             "postgresql_datemultirange_from_json",
             "postgresql_datemultirange_params",
             "postgresql_datemultirange_to_json",
+        ],
+        [
+            POSTGRESQL_DOMAIN,
+            "postgresql_domain_from_json",
+            "postgresql_domain_params",
+            "postgresql_domain_to_json",
         ],
         [
             POSTGRESQL_ENUM,
@@ -304,6 +351,18 @@ def test_schema_map_key() -> None:
             "postgresql_int8multirange_to_json",
         ],
         [
+            POSTGRESQL_INET,
+            "postgresql_inet_from_json",
+            "postgresql_inet_params",
+            "postgresql_inet_to_json",
+        ],
+        [
+            POSTGRESQL_INTERVAL,
+            "postgresql_interval_from_json",
+            "postgresql_interval_params",
+            "postgresql_interval_to_json",
+        ],
+        [
             POSTGRESQL_JSON,
             "postgresql_json_from_json",
             "postgresql_json_params",
@@ -322,6 +381,24 @@ def test_schema_map_key() -> None:
             "postgresql_jsonpath_to_json",
         ],
         [
+            POSTGRESQL_MACADDR,
+            "postgresql_macaddr_from_json",
+            "postgresql_macaddr_params",
+            "postgresql_macaddr_to_json",
+        ],
+        [
+            POSTGRESQL_MACADDR8,
+            "postgresql_macaddr8_from_json",
+            "postgresql_macaddr8_params",
+            "postgresql_macaddr8_to_json",
+        ],
+        [
+            POSTGRESQL_MONEY,
+            "postgresql_money_from_json",
+            "postgresql_money_params",
+            "postgresql_money_to_json",
+        ],
+        [
             POSTGRESQL_NUMRANGE,
             "postgresql_numrange_from_json",
             "postgresql_numrange_params",
@@ -332,6 +409,42 @@ def test_schema_map_key() -> None:
             "postgresql_nummultirange_from_json",
             "postgresql_nummultirange_params",
             "postgresql_nummultirange_to_json",
+        ],
+        [
+            POSTGRESQL_OID,
+            "postgresql_oid_from_json",
+            "postgresql_oid_params",
+            "postgresql_oid_to_json",
+        ],
+        [
+            POSTGRESQL_REGCLASS,
+            "postgresql_regclass_from_json",
+            "postgresql_regclass_params",
+            "postgresql_regclass_to_json",
+        ],
+        [
+            POSTGRESQL_REGCONFIG,
+            "postgresql_regconfig_from_json",
+            "postgresql_regconfig_params",
+            "postgresql_regconfig_to_json",
+        ],
+        [
+            POSTGRESQL_TIME,
+            "postgresql_time_from_json",
+            "postgresql_time_params",
+            "postgresql_time_to_json",
+        ],
+        [
+            POSTGRESQL_TIMESTAMP,
+            "postgresql_timestamp_from_json",
+            "postgresql_timestamp_params",
+            "postgresql_timestamp_to_json",
+        ],
+        [
+            POSTGRESQL_TSQUERY,
+            "postgresql_tsquery_from_json",
+            "postgresql_tsquery_params",
+            "postgresql_tsquery_to_json",
         ],
         [
             POSTGRESQL_TSRANGE,
@@ -356,6 +469,12 @@ def test_schema_map_key() -> None:
             "postgresql_tstzmultirange_from_json",
             "postgresql_tstzmultirange_params",
             "postgresql_tstzmultirange_to_json",
+        ],
+        [
+            POSTGRESQL_TSVECTOR,
+            "postgresql_tsvector_from_json",
+            "postgresql_tsvector_params",
+            "postgresql_tsvector_to_json",
         ],
     ],
 )
