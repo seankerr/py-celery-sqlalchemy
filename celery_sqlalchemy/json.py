@@ -197,15 +197,15 @@ def array_to_json(field: Field, value: Optional[List[Any]]) -> Optional[List[Any
     return value
 
 
-def big_integer_from_json(field: Field, value: Optional[int]) -> Optional[int]:
+def biginteger_from_json(field: Field, value: Optional[int]) -> Optional[int]:
     return value
 
 
-def big_integer_params(column: Column) -> Any:
+def biginteger_params(column: Column) -> Any:
     return
 
 
-def big_integer_to_json(field: Field, value: Optional[int]) -> Optional[int]:
+def biginteger_to_json(field: Field, value: Optional[int]) -> Optional[int]:
     return value
 
 
@@ -228,7 +228,7 @@ def date_from_json(field: Field, value: Optional[str]) -> Optional[date]:
     return date.fromisoformat(value)
 
 
-def date_out_params(column: Column) -> Any:
+def date_params(column: Column) -> Any:
     return
 
 
@@ -236,18 +236,18 @@ def date_to_json(field: Field, value: Optional[date]) -> Optional[date]:
     return value
 
 
-def date_time_from_json(field: Field, value: Optional[str]) -> Optional[datetime]:
+def datetime_from_json(field: Field, value: Optional[str]) -> Optional[datetime]:
     if value is None:
         return None
 
     return datetime.fromisoformat(value)
 
 
-def date_time_params(column: Column) -> Any:
+def datetime_params(column: Column) -> Any:
     return
 
 
-def date_time_to_json(field: Field, value: Optional[datetime]) -> Optional[datetime]:
+def datetime_to_json(field: Field, value: Optional[datetime]) -> Optional[datetime]:
     return value
 
 
@@ -335,15 +335,15 @@ def interval_to_json(field: Field, value: Optional[timedelta]) -> Optional[List[
     return [value.days, value.seconds, value.microseconds]
 
 
-def large_binary_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+def largebinary_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 
-def large_binary_params(column: Column) -> Any:
+def largebinary_params(column: Column) -> Any:
     return
 
 
-def large_binary_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+def largebinary_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 
@@ -394,15 +394,15 @@ def numeric_to_json(
         return cast(float, value)
 
 
-def small_integer_from_json(field: Field, value: Optional[int]) -> Optional[int]:
+def smallinteger_from_json(field: Field, value: Optional[int]) -> Optional[int]:
     return value
 
 
-def small_integer_params(column: Column) -> Any:
+def smallinteger_params(column: Column) -> Any:
     return
 
 
-def small_integer_to_json(field: Field, value: Optional[int]) -> Optional[int]:
+def smallinteger_to_json(field: Field, value: Optional[int]) -> Optional[int]:
     return value
 
 
@@ -457,15 +457,15 @@ def unicode_to_json(field: Field, value: Optional[str]) -> Optional[str]:
     return value
 
 
-def unicode_text_from_json(field: Field, value: Optional[str]) -> Optional[str]:
+def unicodetext_from_json(field: Field, value: Optional[str]) -> Optional[str]:
     return value
 
 
-def unicode_text_params(column: Column) -> Any:
+def unicodetext_params(column: Column) -> Any:
     return
 
 
-def unicode_text_to_json(field: Field, value: Optional[str]) -> Optional[str]:
+def unicodetext_to_json(field: Field, value: Optional[str]) -> Optional[str]:
     return value
 
 

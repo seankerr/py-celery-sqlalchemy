@@ -3,24 +3,13 @@
 # --------------------------------------------------------------------------------------
 
 # celery-sqlalchemy types
-from celery_sqlalchemy.model import add_schema
-from celery_sqlalchemy.model import load_model
-from celery_sqlalchemy.model import map_model
-from celery_sqlalchemy.model import schema_for_model
-from celery_sqlalchemy.model import schema_for_model_path
-from celery_sqlalchemy.model import schema_map_key
-from celery_sqlalchemy.model import type_maps
+from celery_sqlalchemy.model_postgresql import postgresql_type_maps
 
-from celery_sqlalchemy.schema import Field
 from celery_sqlalchemy.schema import TypeMap
 
 # system imports
 from typing import Any
 from typing import List
-
-from unittest.mock import MagicMock
-from unittest.mock import Mock
-from unittest.mock import patch
 
 # dependency imports
 from pytest import mark
@@ -61,211 +50,10 @@ from sqlalchemy.dialects.postgresql import TSTZRANGE as POSTGRESQL_TSTZRANGE
 from sqlalchemy.dialects.postgresql import TSTZMULTIRANGE as POSTGRESQL_TSTZMULTIRANGE
 from sqlalchemy.dialects.postgresql import TSVECTOR as POSTGRESQL_TSVECTOR
 
-from sqlalchemy.sql import sqltypes
-
-PATH = "celery_sqlalchemy.model"
-
-
-@patch(f"{PATH}.schema_maps")
-@patch(f"{PATH}.schema_map_key")
-@patch(f"{PATH}.map_model")
-def test_add_schema(
-    map_model: Mock, schema_map_key: Mock, schema_maps: MagicMock
-) -> None:
-    model = Mock()
-    mapper = Mock()
-    interface = Mock()
-
-    assert add_schema(model, mapper, interface) == map_model.return_value
-
-    map_model.assert_called_with(model, mapper, interface)
-    schema_map_key.assert_called_with(model)
-
-    schema_maps.__setitem__.assert_called_with(schema_map_key(), map_model())
-
-
-@patch(f"{PATH}.import_module")
-def test_load_model(import_module: Mock) -> None:
-    module = Mock()
-    import_module.return_value = module
-
-    model_path = "path.Model"
-
-    assert load_model(model_path) == module.Model
-
-
-@mark.parametrize("type", type_maps.keys())
-def test_map_model(type: type) -> None:
-    column = Mock(type=Mock(__class__=type))
-    model = Mock()
-    mapper = Mock(columns=[column])
-    format_module = Mock()
-
-    from_json = Mock()
-    params = Mock()
-    to_json = Mock()
-
-    setattr(format_module, type_maps[type].from_json, from_json)
-    setattr(format_module, type_maps[type].params, params)
-    setattr(format_module, type_maps[type].to_json, to_json)
-
-    schema = map_model(model, mapper, format_module)
-
-    params.assert_called_with(column)
-
-    assert schema.fields == [
-        Field(
-            from_json=from_json,
-            name=column.name,
-            params=params(),
-            to_json=to_json,
-            type=type,
-        )
-    ]
-
-    assert schema.model == model
-
-
-@patch(f"{PATH}.add_schema")
-@patch(f"{PATH}.schema_maps")
-@patch(f"{PATH}.schema_map_key")
-def test_schema_for_model(
-    schema_map_key: Mock, schema_maps: Mock, add_schema: Mock
-) -> None:
-    schema = Mock()
-    schema_maps.get.return_value = schema
-
-    model = Mock()
-    mapper = Mock()
-    interface = Mock()
-
-    assert schema_for_model(model, mapper, interface) == schema
-
-    add_schema.assert_not_called()
-    schema_map_key.assert_called_with(model)
-    schema_maps.get.assert_called_with(schema_map_key())
-
-
-@patch(f"{PATH}.add_schema")
-@patch(f"{PATH}.schema_maps")
-@patch(f"{PATH}.schema_map_key")
-def test_schema_for_model__adds_schema(
-    schema_map_key: Mock, schema_maps: Mock, add_schema: Mock
-) -> None:
-    schema = Mock()
-    add_schema.return_value = schema
-    schema_maps.get.return_value = None
-
-    model = Mock()
-    mapper = Mock()
-    interface = Mock()
-
-    assert schema_for_model(model, mapper, interface) == schema
-
-    add_schema.assert_called_with(model, mapper, interface)
-
-
-@patch(f"{PATH}.schema_maps")
-def test_schema_for_model_path(schema_maps: Mock) -> None:
-    schema = Mock()
-    schema_maps.get.return_value = schema
-    model_path = Mock()
-    interface = Mock()
-
-    assert schema_for_model_path(model_path, interface) == schema
-
-    schema_maps.get.assert_called_with(model_path)
-
-
-@patch(f"{PATH}.add_schema")
-@patch(f"{PATH}.inspect")
-@patch(f"{PATH}.load_model")
-@patch(f"{PATH}.schema_maps")
-def test_schema_for_model_path__adds_schema(
-    schema_maps: Mock, load_model: Mock, inspect: Mock, add_schema: Mock
-) -> None:
-    model = Mock()
-    load_model.return_value = model
-    mapper = Mock()
-    inspect.return_value = mapper
-    schema = Mock()
-    add_schema.return_value = schema
-    schema_maps.get.return_value = None
-    model_path = Mock()
-    interface = Mock()
-
-    assert schema_for_model_path(model_path, interface) == schema
-
-    load_model.assert_called_with(model_path)
-    inspect.assert_called_with(model)
-    add_schema.assert_called_with(model, mapper, interface)
-
-
-def test_schema_map_key() -> None:
-    model = Mock()
-
-    assert schema_map_key(model) == f"{model.__module__}.{model.__class__.__name__}"
-
 
 @mark.parametrize(
     "type",
     [
-        # ------------------------------------------------------------------------------
-        # Base SQLAlchemy types
-        # ------------------------------------------------------------------------------
-        [sqltypes.ARRAY, "array_from_json", "array_params", "array_to_json"],
-        [
-            sqltypes.BigInteger,
-            "biginteger_from_json",
-            "biginteger_params",
-            "biginteger_to_json",
-        ],
-        [sqltypes.Boolean, "boolean_from_json", "boolean_params", "boolean_to_json"],
-        [sqltypes.Date, "date_from_json", "date_params", "date_to_json"],
-        [
-            sqltypes.DateTime,
-            "datetime_from_json",
-            "datetime_params",
-            "datetime_to_json",
-        ],
-        [sqltypes.Double, "double_from_json", "double_params", "double_to_json"],
-        [sqltypes.Enum, "enum_from_json", "enum_params", "enum_to_json"],
-        [sqltypes.Float, "float_from_json", "float_params", "float_to_json"],
-        [sqltypes.Integer, "integer_from_json", "integer_params", "integer_to_json"],
-        [
-            sqltypes.Interval,
-            "interval_from_json",
-            "interval_params",
-            "interval_to_json",
-        ],
-        [
-            sqltypes.LargeBinary,
-            "largebinary_from_json",
-            "largebinary_params",
-            "largebinary_to_json",
-        ],
-        [sqltypes.JSON, "json_from_json", "json_params", "json_to_json"],
-        [sqltypes.Numeric, "numeric_from_json", "numeric_params", "numeric_to_json"],
-        [
-            sqltypes.SmallInteger,
-            "smallinteger_from_json",
-            "smallinteger_params",
-            "smallinteger_to_json",
-        ],
-        [sqltypes.String, "string_from_json", "string_params", "string_to_json"],
-        [sqltypes.Text, "text_from_json", "text_params", "text_to_json"],
-        [sqltypes.Time, "time_from_json", "time_params", "time_to_json"],
-        [sqltypes.Unicode, "unicode_from_json", "unicode_params", "unicode_to_json"],
-        [
-            sqltypes.UnicodeText,
-            "unicodetext_from_json",
-            "unicodetext_params",
-            "unicodetext_to_json",
-        ],
-        [sqltypes.UUID, "uuid_from_json", "uuid_params", "uuid_to_json"],
-        # ------------------------------------------------------------------------------
-        # Dialect specific types
-        # ------------------------------------------------------------------------------
         [
             POSTGRESQL_ARRAY,
             "postgresql_array_from_json",
@@ -479,6 +267,6 @@ def test_schema_map_key() -> None:
     ],
 )
 def test_type_maps(type: List[Any]) -> None:
-    assert type_maps[type[0]] == TypeMap(
+    assert postgresql_type_maps[type[0]] == TypeMap(
         from_json=type[1], params=type[2], to_json=type[3]
     )

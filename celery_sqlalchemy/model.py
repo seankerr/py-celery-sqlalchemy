@@ -145,9 +145,9 @@ type_maps = {
         from_json="array_from_json", params="array_params", to_json="array_to_json"
     ),
     sqltypes.BigInteger: TypeMap(
-        from_json="big_integer_from_json",
-        params="big_integer_params",
-        to_json="big_integer_to_json",
+        from_json="biginteger_from_json",
+        params="biginteger_params",
+        to_json="biginteger_to_json",
     ),
     sqltypes.Boolean: TypeMap(
         from_json="boolean_from_json",
@@ -158,9 +158,9 @@ type_maps = {
         from_json="date_from_json", params="date_params", to_json="date_to_json"
     ),
     sqltypes.DateTime: TypeMap(
-        from_json="date_time_from_json",
-        params="date_time_params",
-        to_json="date_time_to_json",
+        from_json="datetime_from_json",
+        params="datetime_params",
+        to_json="datetime_to_json",
     ),
     sqltypes.Double: TypeMap(
         from_json="double_from_json", params="double_params", to_json="double_to_json"
@@ -182,9 +182,9 @@ type_maps = {
         to_json="interval_to_json",
     ),
     sqltypes.LargeBinary: TypeMap(
-        from_json="large_binary_from_json",
-        params="large_binary_params",
-        to_json="large_binary_to_json",
+        from_json="largebinary_from_json",
+        params="largebinary_params",
+        to_json="largebinary_to_json",
     ),
     sqltypes.JSON: TypeMap(
         from_json="json_from_json", params="json_params", to_json="json_to_json"
@@ -195,9 +195,9 @@ type_maps = {
         to_json="numeric_to_json",
     ),
     sqltypes.SmallInteger: TypeMap(
-        from_json="small_integer_from_json",
-        params="small_integer_params",
-        to_json="small_integer_to_json",
+        from_json="smallinteger_from_json",
+        params="smallinteger_params",
+        to_json="smallinteger_to_json",
     ),
     sqltypes.String: TypeMap(
         from_json="string_from_json", params="string_params", to_json="string_to_json"
@@ -214,9 +214,9 @@ type_maps = {
         to_json="unicode_to_json",
     ),
     sqltypes.UnicodeText: TypeMap(
-        from_json="unicode_text_from_json",
-        params="unicode_text_params",
-        to_json="unicode_text_to_json",
+        from_json="unicodetext_from_json",
+        params="unicodetext_params",
+        to_json="unicodetext_to_json",
     ),
     sqltypes.UUID: TypeMap(
         from_json="uuid_from_json", params="uuid_params", to_json="uuid_to_json"
