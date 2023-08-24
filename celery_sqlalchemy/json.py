@@ -12,6 +12,8 @@ from datetime import date
 from datetime import datetime
 from datetime import time
 
+from decimal import Decimal
+
 from typing import Any
 from typing import Dict
 from typing import List
@@ -267,11 +269,11 @@ def json_out(value: Any) -> Any:
 
 
 def numeric_in(value: Any) -> Any:
-    return value
+    return Decimal(value)
 
 
 def numeric_out(value: Any) -> Any:
-    return value
+    return str(value)
 
 
 def small_integer_in(value: Any) -> Any:
