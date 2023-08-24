@@ -529,6 +529,30 @@ def postgresql_hstore_to_json(field: Field, value: Optional[Any]) -> Optional[An
     return value
 
 
+def postgresql_int4range_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_int4range_params(column: Column) -> Any:
+    return
+
+
+def postgresql_int4range_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_int8range_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_int8range_params(column: Column) -> Any:
+    return
+
+
+def postgresql_int8range_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
 def postgresql_json_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
@@ -550,4 +574,68 @@ def postgresql_jsonb_params(column: Column) -> Any:
 
 
 def postgresql_jsonb_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_jsonpath_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_jsonpath_params(column: Column) -> Any:
+    return
+
+
+def postgresql_jsonpath_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_numrange_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_numrange_params(column: Column) -> Any:
+    return
+
+
+def postgresql_numrange_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_tsrange_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_tsrange_params(column: Column) -> Any:
+    return
+
+
+def postgresql_tsrange_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_tsmultirange_from_json(
+    field: Field, value: Optional[Any]
+) -> Optional[Any]:
+    return value
+
+
+def postgresql_tsmultirange_params(column: Column) -> Any:
+    return
+
+
+def postgresql_tsmultirange_to_json(
+    field: Field, value: Optional[Any]
+) -> Optional[Any]:
+    return value
+
+
+def postgresql_tstzrange_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_tstzrange_params(column: Column) -> Any:
+    return
+
+
+def postgresql_tstzrange_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value

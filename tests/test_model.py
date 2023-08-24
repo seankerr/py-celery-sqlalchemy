@@ -25,11 +25,18 @@ from unittest.mock import patch
 # dependency imports
 from pytest import mark
 
-from sqlalchemy.dialects.postgresql.array import ARRAY as POSTGRESQL_ARRAY
-from sqlalchemy.dialects.postgresql.named_types import ENUM as POSTGRESQL_ENUM
-from sqlalchemy.dialects.postgresql.hstore import HSTORE as POSTGRESQL_HSTORE
-from sqlalchemy.dialects.postgresql.json import JSON as POSTGRESQL_JSON
-from sqlalchemy.dialects.postgresql.json import JSONB as POSTGRESQL_JSONB
+from sqlalchemy.dialects.postgresql import ARRAY as POSTGRESQL_ARRAY
+from sqlalchemy.dialects.postgresql import ENUM as POSTGRESQL_ENUM
+from sqlalchemy.dialects.postgresql import HSTORE as POSTGRESQL_HSTORE
+from sqlalchemy.dialects.postgresql import INT4RANGE as POSTGRESQL_INT4RANGE
+from sqlalchemy.dialects.postgresql import INT8RANGE as POSTGRESQL_INT8RANGE
+from sqlalchemy.dialects.postgresql import JSON as POSTGRESQL_JSON
+from sqlalchemy.dialects.postgresql import JSONB as POSTGRESQL_JSONB
+from sqlalchemy.dialects.postgresql import JSONPATH as POSTGRESQL_JSONPATH
+from sqlalchemy.dialects.postgresql import NUMRANGE as POSTGRESQL_NUMRANGE
+from sqlalchemy.dialects.postgresql import TSRANGE as POSTGRESQL_TSRANGE
+from sqlalchemy.dialects.postgresql import TSMULTIRANGE as POSTGRESQL_TSMULTIRANGE
+from sqlalchemy.dialects.postgresql import TSTZRANGE as POSTGRESQL_TSTZRANGE
 
 from sqlalchemy.sql import sqltypes
 
@@ -249,6 +256,18 @@ def test_schema_map_key() -> None:
             "postgresql_hstore_to_json",
         ],
         [
+            POSTGRESQL_INT4RANGE,
+            "postgresql_int4range_from_json",
+            "postgresql_int4range_params",
+            "postgresql_int4range_to_json",
+        ],
+        [
+            POSTGRESQL_INT8RANGE,
+            "postgresql_int8range_from_json",
+            "postgresql_int8range_params",
+            "postgresql_int8range_to_json",
+        ],
+        [
             POSTGRESQL_JSON,
             "postgresql_json_from_json",
             "postgresql_json_params",
@@ -259,6 +278,36 @@ def test_schema_map_key() -> None:
             "postgresql_jsonb_from_json",
             "postgresql_jsonb_params",
             "postgresql_jsonb_to_json",
+        ],
+        [
+            POSTGRESQL_JSONPATH,
+            "postgresql_jsonpath_from_json",
+            "postgresql_jsonpath_params",
+            "postgresql_jsonpath_to_json",
+        ],
+        [
+            POSTGRESQL_NUMRANGE,
+            "postgresql_numrange_from_json",
+            "postgresql_numrange_params",
+            "postgresql_numrange_to_json",
+        ],
+        [
+            POSTGRESQL_TSRANGE,
+            "postgresql_tsrange_from_json",
+            "postgresql_tsrange_params",
+            "postgresql_tsrange_to_json",
+        ],
+        [
+            POSTGRESQL_TSMULTIRANGE,
+            "postgresql_tsmultirange_from_json",
+            "postgresql_tsmultirange_params",
+            "postgresql_tsmultirange_to_json",
+        ],
+        [
+            POSTGRESQL_TSTZRANGE,
+            "postgresql_tstzrange_from_json",
+            "postgresql_tstzrange_params",
+            "postgresql_tstzrange_to_json",
         ],
     ],
 )
