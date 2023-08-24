@@ -541,6 +541,22 @@ def postgresql_int4range_to_json(field: Field, value: Optional[Any]) -> Optional
     return value
 
 
+def postgresql_int4multirange_from_json(
+    field: Field, value: Optional[Any]
+) -> Optional[Any]:
+    return value
+
+
+def postgresql_int4multirange_params(column: Column) -> Any:
+    return
+
+
+def postgresql_int4multirange_to_json(
+    field: Field, value: Optional[Any]
+) -> Optional[Any]:
+    return value
+
+
 def postgresql_int8range_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
@@ -550,6 +566,22 @@ def postgresql_int8range_params(column: Column) -> Any:
 
 
 def postgresql_int8range_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_int8multirange_from_json(
+    field: Field, value: Optional[Any]
+) -> Optional[Any]:
+    return value
+
+
+def postgresql_int8multirange_params(column: Column) -> Any:
+    return
+
+
+def postgresql_int8multirange_to_json(
+    field: Field, value: Optional[Any]
+) -> Optional[Any]:
     return value
 
 
@@ -601,6 +633,22 @@ def postgresql_numrange_to_json(field: Field, value: Optional[Any]) -> Optional[
     return value
 
 
+def postgresql_nummultirange_from_json(
+    field: Field, value: Optional[Any]
+) -> Optional[Any]:
+    return value
+
+
+def postgresql_nummultirange_params(column: Column) -> Any:
+    return
+
+
+def postgresql_nummultirange_to_json(
+    field: Field, value: Optional[Any]
+) -> Optional[Any]:
+    return value
+
+
 def postgresql_tsrange_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
@@ -638,4 +686,20 @@ def postgresql_tstzrange_params(column: Column) -> Any:
 
 
 def postgresql_tstzrange_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_tstzmultirange_from_json(
+    field: Field, value: Optional[Any]
+) -> Optional[Any]:
+    return value
+
+
+def postgresql_tstzmultirange_params(column: Column) -> Any:
+    return
+
+
+def postgresql_tstzmultirange_to_json(
+    field: Field, value: Optional[Any]
+) -> Optional[Any]:
     return value

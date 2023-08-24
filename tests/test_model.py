@@ -29,14 +29,18 @@ from sqlalchemy.dialects.postgresql import ARRAY as POSTGRESQL_ARRAY
 from sqlalchemy.dialects.postgresql import ENUM as POSTGRESQL_ENUM
 from sqlalchemy.dialects.postgresql import HSTORE as POSTGRESQL_HSTORE
 from sqlalchemy.dialects.postgresql import INT4RANGE as POSTGRESQL_INT4RANGE
+from sqlalchemy.dialects.postgresql import INT4MULTIRANGE as POSTGRESQL_INT4MULTIRANGE
 from sqlalchemy.dialects.postgresql import INT8RANGE as POSTGRESQL_INT8RANGE
+from sqlalchemy.dialects.postgresql import INT8MULTIRANGE as POSTGRESQL_INT8MULTIRANGE
 from sqlalchemy.dialects.postgresql import JSON as POSTGRESQL_JSON
 from sqlalchemy.dialects.postgresql import JSONB as POSTGRESQL_JSONB
 from sqlalchemy.dialects.postgresql import JSONPATH as POSTGRESQL_JSONPATH
 from sqlalchemy.dialects.postgresql import NUMRANGE as POSTGRESQL_NUMRANGE
+from sqlalchemy.dialects.postgresql import NUMMULTIRANGE as POSTGRESQL_NUMMULTIRANGE
 from sqlalchemy.dialects.postgresql import TSRANGE as POSTGRESQL_TSRANGE
 from sqlalchemy.dialects.postgresql import TSMULTIRANGE as POSTGRESQL_TSMULTIRANGE
 from sqlalchemy.dialects.postgresql import TSTZRANGE as POSTGRESQL_TSTZRANGE
+from sqlalchemy.dialects.postgresql import TSTZMULTIRANGE as POSTGRESQL_TSTZMULTIRANGE
 
 from sqlalchemy.sql import sqltypes
 
@@ -262,10 +266,22 @@ def test_schema_map_key() -> None:
             "postgresql_int4range_to_json",
         ],
         [
+            POSTGRESQL_INT4MULTIRANGE,
+            "postgresql_int4multirange_from_json",
+            "postgresql_int4multirange_params",
+            "postgresql_int4multirange_to_json",
+        ],
+        [
             POSTGRESQL_INT8RANGE,
             "postgresql_int8range_from_json",
             "postgresql_int8range_params",
             "postgresql_int8range_to_json",
+        ],
+        [
+            POSTGRESQL_INT8MULTIRANGE,
+            "postgresql_int8multirange_from_json",
+            "postgresql_int8multirange_params",
+            "postgresql_int8multirange_to_json",
         ],
         [
             POSTGRESQL_JSON,
@@ -292,6 +308,12 @@ def test_schema_map_key() -> None:
             "postgresql_numrange_to_json",
         ],
         [
+            POSTGRESQL_NUMMULTIRANGE,
+            "postgresql_nummultirange_from_json",
+            "postgresql_nummultirange_params",
+            "postgresql_nummultirange_to_json",
+        ],
+        [
             POSTGRESQL_TSRANGE,
             "postgresql_tsrange_from_json",
             "postgresql_tsrange_params",
@@ -308,6 +330,12 @@ def test_schema_map_key() -> None:
             "postgresql_tstzrange_from_json",
             "postgresql_tstzrange_params",
             "postgresql_tstzrange_to_json",
+        ],
+        [
+            POSTGRESQL_TSTZMULTIRANGE,
+            "postgresql_tstzmultirange_from_json",
+            "postgresql_tstzmultirange_params",
+            "postgresql_tstzmultirange_to_json",
         ],
     ],
 )
