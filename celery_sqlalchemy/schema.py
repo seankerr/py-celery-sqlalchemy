@@ -29,3 +29,10 @@ class Field(Generic[T]):
 class Schema(ABC):
     fields: List[Field]
     model: Any
+
+
+@dataclass(frozen=True)
+class TypeMap:
+    from_json: str
+    params: Any
+    to_json: str
