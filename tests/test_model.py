@@ -71,17 +71,22 @@ def test_map_model(type: type) -> None:
     mapper = Mock(columns=[column])
     format_module = Mock()
 
+    params = Mock()
     value_in = Mock()
     value_out = Mock()
 
+    setattr(format_module, type_maps[type].params, params)
     setattr(format_module, type_maps[type].value_in, value_in)
     setattr(format_module, type_maps[type].value_out, value_out)
 
     schema = map_model(model, mapper, format_module)
 
+    params.assert_called_with(column.type)
+
     assert schema.fields == [
         Field(
             name=column.name,
+            params=params(),
             type=type,
             value_in=value_in,
             value_out=value_out,
@@ -175,32 +180,79 @@ def test_schema_map_key() -> None:
 @mark.parametrize(
     "type",
     [
-        [sqltypes.ARRAY, "array_in", "array_out"],
-        [sqltypes.BigInteger, "big_integer_in", "big_integer_out"],
-        [sqltypes.Boolean, "boolean_in", "boolean_out"],
-        [sqltypes.Date, "date_in", "date_out"],
-        [sqltypes.DateTime, "date_time_in", "date_time_out"],
-        [sqltypes.Double, "double_in", "double_out"],
-        [sqltypes.Enum, "enum_in", "enum_out"],
-        [sqltypes.Float, "float_in", "float_out"],
-        [sqltypes.Integer, "integer_in", "integer_out"],
-        [sqltypes.Interval, "interval_in", "interval_out"],
-        [sqltypes.LargeBinary, "large_binary_in", "large_binary_out"],
-        [sqltypes.JSON, "json_in", "json_out"],
-        [sqltypes.Numeric, "numeric_in", "numeric_out"],
-        [sqltypes.SmallInteger, "small_integer_in", "small_integer_out"],
-        [sqltypes.String, "string_in", "string_out"],
-        [sqltypes.Text, "text_in", "text_out"],
-        [sqltypes.Time, "time_in", "time_out"],
-        [sqltypes.Unicode, "unicode_in", "unicode_out"],
-        [sqltypes.UnicodeText, "unicode_text_in", "unicode_text_out"],
-        [sqltypes.UUID, "uuid_in", "uuid_out"],
-        [POSTGRESQL_ARRAY, "postgresql_array_in", "postgresql_array_out"],
-        [POSTGRESQL_ENUM, "postgresql_enum_in", "postgresql_enum_out"],
-        [POSTGRESQL_HSTORE, "postgresql_hstore_in", "postgresql_hstore_out"],
-        [POSTGRESQL_JSON, "postgresql_json_in", "postgresql_json_out"],
-        [POSTGRESQL_JSONB, "postgresql_jsonb_in", "postgresql_jsonb_out"],
+        [sqltypes.ARRAY, "array_params", "array_in", "array_out"],
+        [
+            sqltypes.BigInteger,
+            "big_integer_params",
+            "big_integer_in",
+            "big_integer_out",
+        ],
+        [sqltypes.Boolean, "boolean_params", "boolean_in", "boolean_out"],
+        [sqltypes.Date, "date_params", "date_in", "date_out"],
+        [sqltypes.DateTime, "date_time_params", "date_time_in", "date_time_out"],
+        [sqltypes.Double, "double_params", "double_in", "double_out"],
+        [sqltypes.Enum, "enum_params", "enum_in", "enum_out"],
+        [sqltypes.Float, "float_params", "float_in", "float_out"],
+        [sqltypes.Integer, "integer_params", "integer_in", "integer_out"],
+        [sqltypes.Interval, "interval_params", "interval_in", "interval_out"],
+        [
+            sqltypes.LargeBinary,
+            "large_binary_params",
+            "large_binary_in",
+            "large_binary_out",
+        ],
+        [sqltypes.JSON, "json_params", "json_in", "json_out"],
+        [sqltypes.Numeric, "numeric_params", "numeric_in", "numeric_out"],
+        [
+            sqltypes.SmallInteger,
+            "small_integer_params",
+            "small_integer_in",
+            "small_integer_out",
+        ],
+        [sqltypes.String, "string_params", "string_in", "string_out"],
+        [sqltypes.Text, "text_params", "text_in", "text_out"],
+        [sqltypes.Time, "time_params", "time_in", "time_out"],
+        [sqltypes.Unicode, "unicode_params", "unicode_in", "unicode_out"],
+        [
+            sqltypes.UnicodeText,
+            "unicode_text_params",
+            "unicode_text_in",
+            "unicode_text_out",
+        ],
+        [sqltypes.UUID, "uuid_params", "uuid_in", "uuid_out"],
+        [
+            POSTGRESQL_ARRAY,
+            "postgresql_array_params",
+            "postgresql_array_in",
+            "postgresql_array_out",
+        ],
+        [
+            POSTGRESQL_ENUM,
+            "postgresql_enum_params",
+            "postgresql_enum_in",
+            "postgresql_enum_out",
+        ],
+        [
+            POSTGRESQL_HSTORE,
+            "postgresql_hstore_params",
+            "postgresql_hstore_in",
+            "postgresql_hstore_out",
+        ],
+        [
+            POSTGRESQL_JSON,
+            "postgresql_json_params",
+            "postgresql_json_in",
+            "postgresql_json_out",
+        ],
+        [
+            POSTGRESQL_JSONB,
+            "postgresql_jsonb_params",
+            "postgresql_jsonb_in",
+            "postgresql_jsonb_out",
+        ],
     ],
 )
 def test_type_maps(type: List[Any]) -> None:
-    assert type_maps[type[0]] == TypeMap(value_in=type[1], value_out=type[2])
+    assert type_maps[type[0]] == TypeMap(
+        params=type[1], value_in=type[2], value_out=type[3]
+    )

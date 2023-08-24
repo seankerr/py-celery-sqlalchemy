@@ -44,7 +44,7 @@ def test_arg_from_json__model(
     assert arg_from_json(arg) == schema.model.return_value
 
     schema_for_model_path.assert_called_with(model_path, sys.modules[__name__])
-    field.value_in.assert_called_with(name)
+    field.value_in.assert_called_with(field, name)
     schema.model.assert_called_with(name=field.value_in())
 
 
@@ -81,7 +81,7 @@ def test_arg_to_json__model(
 
     inspect.assert_called_with(arg)
     schema_for_model.assert_called_with(arg, inspect().mapper, sys.modules[__name__])
-    field.value_out.assert_called_with(arg.name)
+    field.value_out.assert_called_with(field, arg.name)
     schema_map_key.assert_called_with(arg)
 
 

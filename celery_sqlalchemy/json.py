@@ -7,6 +7,8 @@ from .model import schema_for_model
 from .model import schema_for_model_path
 from .model import schema_map_key
 
+from .schema import Field
+
 # system imports
 from datetime import date
 from datetime import datetime
@@ -30,6 +32,7 @@ from kombu import serialization
 
 from sqlalchemy.exc import NoInspectionAvailable
 
+from sqlalchemy import Column
 from sqlalchemy import inspect
 
 import orjson
@@ -50,7 +53,7 @@ def arg_from_json(arg: Any) -> Any:
 
         return schema.model(
             **{
-                field.name: field.value_in(arg.get(field.name))
+                field.name: field.value_in(field, arg.get(field.name))
                 for field in schema.fields
             }
         )
@@ -73,7 +76,7 @@ def arg_to_json(arg: Any) -> Any:
             schema = schema_for_model(arg, mapper, sys.modules[__name__])
 
             json = {
-                field.name: field.value_out(getattr(arg, field.name))
+                field.name: field.value_out(field, getattr(arg, field.name))
                 for field in schema.fields
             }
 
@@ -169,167 +172,247 @@ def message_to_args(
 # --------------------------------------------------------------------------------------
 
 
-def array_in(value: Any) -> Any:
+def array_in(field: Field, value: Any) -> Any:
     return value
 
 
-def array_out(value: Any) -> Any:
+def array_out(field: Field, value: Any) -> Any:
     return value
 
 
-def big_integer_in(value: Any) -> Any:
+def array_params(column: Column) -> Any:
+    return
+
+
+def big_integer_in(field: Field, value: Any) -> Any:
     return value
 
 
-def big_integer_out(value: Any) -> Any:
+def big_integer_out(field: Field, value: Any) -> Any:
     return value
 
 
-def boolean_in(value: Any) -> Any:
+def big_integer_params(column: Column) -> Any:
+    return
+
+
+def boolean_in(field: Field, value: Any) -> Any:
     return value
 
 
-def boolean_out(value: Any) -> Any:
+def boolean_out(field: Field, value: Any) -> Any:
     return value
 
 
-def date_in(value: Any) -> Any:
+def boolean_params(column: Column) -> Any:
+    return
+
+
+def date_in(field: Field, value: Any) -> Any:
     return date.fromisoformat(value)
 
 
-def date_out(value: Any) -> Any:
+def date_out(field: Field, value: Any) -> Any:
     return value
 
 
-def date_time_in(value: Any) -> Any:
+def date_out_params(column: Column) -> Any:
+    return
+
+
+def date_time_in(field: Field, value: Any) -> Any:
     if value is None:
         return None
 
     return datetime.fromisoformat(value)
 
 
-def date_time_out(value: Any) -> Any:
+def date_time_out(field: Field, value: Any) -> Any:
     return value
 
 
-def double_in(value: Any) -> Any:
+def date_time_params(column: Column) -> Any:
+    return
+
+
+def double_in(field: Field, value: Any) -> Any:
     return value
 
 
-def double_out(value: Any) -> Any:
+def double_out(field: Field, value: Any) -> Any:
     return value
 
 
-def enum_in(value: Any) -> Any:
+def double_params(column: Column) -> Any:
+    return
+
+
+def enum_in(field: Field, value: Any) -> Any:
     return value
 
 
-def enum_out(value: Any) -> Any:
+def enum_out(field: Field, value: Any) -> Any:
     return value
 
 
-def float_in(value: Any) -> Any:
+def enum_params(column: Column) -> Any:
+    return
+
+
+def float_in(field: Field, value: Any) -> Any:
     return value
 
 
-def float_out(value: Any) -> Any:
+def float_out(field: Field, value: Any) -> Any:
     return value
 
 
-def integer_in(value: Any) -> Any:
+def float_params(column: Column) -> Any:
+    return
+
+
+def integer_in(field: Field, value: Any) -> Any:
     return value
 
 
-def integer_out(value: Any) -> Any:
+def integer_out(field: Field, value: Any) -> Any:
     return value
 
 
-def interval_in(value: Any) -> Any:
+def integer_params(column: Column) -> Any:
+    return
+
+
+def interval_in(field: Field, value: Any) -> Any:
     return value
 
 
-def interval_out(value: Any) -> Any:
+def interval_out(field: Field, value: Any) -> Any:
     return value
 
 
-def large_binary_in(value: Any) -> Any:
+def interval_params(column: Column) -> Any:
+    return
+
+
+def large_binary_in(field: Field, value: Any) -> Any:
     return value
 
 
-def large_binary_out(value: Any) -> Any:
+def large_binary_out(field: Field, value: Any) -> Any:
     return value
 
 
-def json_in(value: Any) -> Any:
+def large_binary_params(column: Column) -> Any:
+    return
+
+
+def json_in(field: Field, value: Any) -> Any:
     return value
 
 
-def json_out(value: Any) -> Any:
+def json_out(field: Field, value: Any) -> Any:
     return value
 
 
-def numeric_in(value: Any) -> Any:
+def json_params(column: Column) -> Any:
+    return
+
+
+def numeric_in(field: Field, value: Any) -> Any:
     return Decimal(value)
 
 
-def numeric_out(value: Any) -> Any:
+def numeric_out(field: Field, value: Any) -> Any:
     return str(value)
 
 
-def small_integer_in(value: Any) -> Any:
+def numeric_params(column: Column) -> Any:
+    return
+
+
+def small_integer_in(field: Field, value: Any) -> Any:
     return value
 
 
-def small_integer_out(value: Any) -> Any:
+def small_integer_out(field: Field, value: Any) -> Any:
     return value
 
 
-def string_in(value: Any) -> Any:
+def small_integer_params(column: Column) -> Any:
+    return
+
+
+def string_in(field: Field, value: Any) -> Any:
     return value
 
 
-def string_out(value: Any) -> Any:
+def string_out(field: Field, value: Any) -> Any:
     return value
 
 
-def text_in(value: Any) -> Any:
+def string_params(column: Column) -> Any:
+    return
+
+
+def text_in(field: Field, value: Any) -> Any:
     return value
 
 
-def text_out(value: Any) -> Any:
+def text_out(field: Field, value: Any) -> Any:
     return value
 
 
-def time_in(value: Any) -> Any:
+def text_params(column: Column) -> Any:
+    return
+
+
+def time_in(field: Field, value: Any) -> Any:
     return time.fromisoformat(value)
 
 
-def time_out(value: Any) -> Any:
+def time_out(field: Field, value: Any) -> Any:
     return value
 
 
-def unicode_in(value: Any) -> Any:
+def time_params(column: Column) -> Any:
+    return
+
+
+def unicode_in(field: Field, value: Any) -> Any:
     return value
 
 
-def unicode_out(value: Any) -> Any:
+def unicode_out(field: Field, value: Any) -> Any:
     return value
 
 
-def unicode_text_in(value: Any) -> Any:
+def unicode_params(column: Column) -> Any:
+    return
+
+
+def unicode_text_in(field: Field, value: Any) -> Any:
     return value
 
 
-def unicode_text_out(value: Any) -> Any:
+def unicode_text_out(field: Field, value: Any) -> Any:
     return value
 
 
-def uuid_in(value: Any) -> Any:
+def unicode_text_params(column: Column) -> Any:
+    return
+
+
+def uuid_in(field: Field, value: Any) -> Any:
     return UUID(value)
 
 
-def uuid_out(value: Any) -> Any:
+def uuid_out(field: Field, value: Any) -> Any:
     return value
+
+
+def uuid_params(column: Column) -> Any:
+    return
 
 
 # --------------------------------------------------------------------------------------
@@ -337,41 +420,41 @@ def uuid_out(value: Any) -> Any:
 # --------------------------------------------------------------------------------------
 
 
-def postgresql_array_in(value: Any) -> Any:
+def postgresql_array_in(field: Field, value: Any) -> Any:
     return value
 
 
-def postgresql_array_out(value: Any) -> Any:
+def postgresql_array_out(field: Field, value: Any) -> Any:
     return value
 
 
-def postgresql_enum_in(value: Any) -> Any:
+def postgresql_enum_in(field: Field, value: Any) -> Any:
     return value
 
 
-def postgresql_enum_out(value: Any) -> Any:
+def postgresql_enum_out(field: Field, value: Any) -> Any:
     return value
 
 
-def postgresql_hstore_in(value: Any) -> Any:
+def postgresql_hstore_in(field: Field, value: Any) -> Any:
     return value
 
 
-def postgresql_hstore_out(value: Any) -> Any:
+def postgresql_hstore_out(field: Field, value: Any) -> Any:
     return value
 
 
-def postgresql_json_in(value: Any) -> Any:
+def postgresql_json_in(field: Field, value: Any) -> Any:
     return value
 
 
-def postgresql_json_out(value: Any) -> Any:
+def postgresql_json_out(field: Field, value: Any) -> Any:
     return value
 
 
-def postgresql_jsonb_in(value: Any) -> Any:
+def postgresql_jsonb_in(field: Field, value: Any) -> Any:
     return value
 
 
-def postgresql_jsonb_out(value: Any) -> Any:
+def postgresql_jsonb_out(field: Field, value: Any) -> Any:
     return value

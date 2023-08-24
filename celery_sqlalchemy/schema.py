@@ -15,6 +15,7 @@ from typing import List
 @dataclass(frozen=True)
 class Field:
     name: str
+    params: Any
     type: type
     value_in: Callable
     value_out: Callable
