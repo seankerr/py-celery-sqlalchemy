@@ -122,6 +122,22 @@ def postgresql_domain_to_json(field: Field, value: Optional[Any]) -> Optional[An
     return value
 
 
+def postgresql_double_precision_from_json(
+    field: Field, value: Optional[Any]
+) -> Optional[Any]:
+    return value
+
+
+def postgresql_double_precision_params(column: Column) -> Any:
+    return
+
+
+def postgresql_double_precision_to_json(
+    field: Field, value: Optional[Any]
+) -> Optional[Any]:
+    return value
+
+
 def postgresql_enum_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
@@ -335,6 +351,18 @@ def postgresql_oid_params(column: Column) -> Any:
 
 
 def postgresql_oid_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_real_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    return value
+
+
+def postgresql_real_params(column: Column) -> Any:
+    return
+
+
+def postgresql_real_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 

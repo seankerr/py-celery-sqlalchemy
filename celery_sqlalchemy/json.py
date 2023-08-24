@@ -513,6 +513,9 @@ from .json_postgresql import postgresql_datemultirange_to_json  # noqa
 from .json_postgresql import postgresql_domain_from_json  # noqa
 from .json_postgresql import postgresql_domain_params  # noqa
 from .json_postgresql import postgresql_domain_to_json  # noqa
+from .json_postgresql import postgresql_double_precision_from_json  # noqa
+from .json_postgresql import postgresql_double_precision_params  # noqa
+from .json_postgresql import postgresql_double_precision_to_json  # noqa
 from .json_postgresql import postgresql_enum_from_json  # noqa
 from .json_postgresql import postgresql_enum_params  # noqa
 from .json_postgresql import postgresql_enum_to_json  # noqa
@@ -564,6 +567,9 @@ from .json_postgresql import postgresql_nummultirange_to_json  # noqa
 from .json_postgresql import postgresql_oid_from_json  # noqa
 from .json_postgresql import postgresql_oid_params  # noqa
 from .json_postgresql import postgresql_oid_to_json  # noqa
+from .json_postgresql import postgresql_real_from_json  # noqa
+from .json_postgresql import postgresql_real_params  # noqa
+from .json_postgresql import postgresql_real_to_json  # noqa
 from .json_postgresql import postgresql_regclass_from_json  # noqa
 from .json_postgresql import postgresql_regclass_params  # noqa
 from .json_postgresql import postgresql_regclass_to_json  # noqa

@@ -14,6 +14,9 @@ from sqlalchemy.dialects.postgresql import CITEXT as POSTGRESQL_CITEXT
 from sqlalchemy.dialects.postgresql import DATERANGE as POSTGRESQL_DATERANGE
 from sqlalchemy.dialects.postgresql import DATEMULTIRANGE as POSTGRESQL_DATEMULTIRANGE
 from sqlalchemy.dialects.postgresql import DOMAIN as POSTGRESQL_DOMAIN
+from sqlalchemy.dialects.postgresql import (
+    DOUBLE_PRECISION as POSTGRESQL_DOUBLE_PRECISION,
+)
 from sqlalchemy.dialects.postgresql import ENUM as POSTGRESQL_ENUM
 from sqlalchemy.dialects.postgresql import HSTORE as POSTGRESQL_HSTORE
 from sqlalchemy.dialects.postgresql import INT4RANGE as POSTGRESQL_INT4RANGE
@@ -31,6 +34,7 @@ from sqlalchemy.dialects.postgresql import MONEY as POSTGRESQL_MONEY
 from sqlalchemy.dialects.postgresql import NUMRANGE as POSTGRESQL_NUMRANGE
 from sqlalchemy.dialects.postgresql import NUMMULTIRANGE as POSTGRESQL_NUMMULTIRANGE
 from sqlalchemy.dialects.postgresql import OID as POSTGRESQL_OID
+from sqlalchemy.dialects.postgresql import REAL as POSTGRESQL_REAL
 from sqlalchemy.dialects.postgresql import REGCLASS as POSTGRESQL_REGCLASS
 from sqlalchemy.dialects.postgresql import REGCONFIG as POSTGRESQL_REGCONFIG
 from sqlalchemy.dialects.postgresql import TIME as POSTGRESQL_TIME
@@ -82,6 +86,11 @@ postgresql_type_maps = {
         from_json="postgresql_domain_from_json",
         params="postgresql_domain_params",
         to_json="postgresql_domain_to_json",
+    ),
+    POSTGRESQL_DOUBLE_PRECISION: TypeMap(
+        from_json="postgresql_double_precision_from_json",
+        params="postgresql_double_precision_params",
+        to_json="postgresql_double_precision_to_json",
     ),
     POSTGRESQL_ENUM: TypeMap(
         from_json="postgresql_enum_from_json",
@@ -167,6 +176,11 @@ postgresql_type_maps = {
         from_json="postgresql_oid_from_json",
         params="postgresql_oid_params",
         to_json="postgresql_oid_to_json",
+    ),
+    POSTGRESQL_REAL: TypeMap(
+        from_json="postgresql_real_from_json",
+        params="postgresql_real_params",
+        to_json="postgresql_real_to_json",
     ),
     POSTGRESQL_REGCLASS: TypeMap(
         from_json="postgresql_regclass_from_json",

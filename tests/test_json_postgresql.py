@@ -169,6 +169,26 @@ def test_postgresql_domain_to_json() -> None:
     assert json_postgresql.postgresql_domain_to_json(field, value) == value
 
 
+def test_postgresql_double_precision_from_json() -> None:
+    field = Mock()
+    value = Mock()
+
+    assert json_postgresql.postgresql_double_precision_from_json(field, value) == value
+
+
+def test_postgresql_double_precision_params() -> None:
+    column = Mock()
+
+    assert not json_postgresql.postgresql_double_precision_params(column)
+
+
+def test_postgresql_double_precision_to_json() -> None:
+    field = Mock()
+    value = Mock()
+
+    assert json_postgresql.postgresql_double_precision_to_json(field, value) == value
+
+
 def test_postgresql_enum_from_json() -> None:
     field = Mock()
     value = Mock()
@@ -507,6 +527,26 @@ def test_postgresql_oid_to_json() -> None:
     value = Mock()
 
     assert json_postgresql.postgresql_oid_to_json(field, value) == value
+
+
+def test_postgresql_real_from_json() -> None:
+    field = Mock()
+    value = Mock()
+
+    assert json_postgresql.postgresql_real_from_json(field, value) == value
+
+
+def test_postgresql_real_params() -> None:
+    column = Mock()
+
+    assert not json_postgresql.postgresql_real_params(column)
+
+
+def test_postgresql_real_to_json() -> None:
+    field = Mock()
+    value = Mock()
+
+    assert json_postgresql.postgresql_real_to_json(field, value) == value
 
 
 def test_postgresql_regclass_from_json() -> None:
