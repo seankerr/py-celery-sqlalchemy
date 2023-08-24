@@ -484,11 +484,8 @@ def uuid_params(column: Column) -> Any:
     return
 
 
-def uuid_to_json(field: Field, value: Optional[UUID]) -> Optional[str]:
-    if value is None:
-        return None
-
-    return str(value)
+def uuid_to_json(field: Field, value: Optional[UUID]) -> Optional[UUID]:
+    return value
 
 
 # --------------------------------------------------------------------------------------
