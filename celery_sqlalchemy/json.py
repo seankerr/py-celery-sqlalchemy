@@ -254,10 +254,7 @@ def date_time_to_json(field: Field, value: Optional[datetime]) -> Optional[datet
 def double_from_json(
     field: Field[NumericParams], value: Optional[Union[float, str]]
 ) -> Optional[Union[Decimal, float]]:
-    if value is None:
-        return None
-
-    return 0
+    return numeric_from_json(field, value)
 
 
 def double_params(column: Column) -> NumericParams:
@@ -272,10 +269,7 @@ def double_params(column: Column) -> NumericParams:
 def double_to_json(
     field: Field[NumericParams], value: Optional[Union[Decimal, float]]
 ) -> Optional[Union[float, str]]:
-    if value is None:
-        return None
-
-    return 0
+    return numeric_to_json(field, value)
 
 
 def enum_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
@@ -293,10 +287,7 @@ def enum_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
 def float_from_json(
     field: Field[NumericParams], value: Optional[Union[float, str]]
 ) -> Optional[Union[Decimal, float]]:
-    if value is None:
-        return None
-
-    return 0
+    return numeric_from_json(field, value)
 
 
 def float_params(column: Column) -> NumericParams:
@@ -311,10 +302,7 @@ def float_params(column: Column) -> NumericParams:
 def float_to_json(
     field: Field[NumericParams], value: Optional[Union[Decimal, float]]
 ) -> Optional[Union[float, str]]:
-    if value is None:
-        return None
-
-    return 0
+    return numeric_to_json(field, value)
 
 
 def integer_from_json(field: Field, value: Optional[int]) -> Optional[int]:
@@ -377,7 +365,11 @@ def numeric_from_json(
     if value is None:
         return None
 
-    return 0
+    elif field.params.asdecimal:
+        return Decimal(value)
+
+    else:
+        return cast(float, value)
 
 
 def numeric_params(column: Column) -> NumericParams:
@@ -395,7 +387,11 @@ def numeric_to_json(
     if value is None:
         return None
 
-    return 0
+    elif field.params.asdecimal:
+        return str(round(value, field.params.scale))
+
+    else:
+        return cast(float, value)
 
 
 def small_integer_from_json(field: Field, value: Optional[int]) -> Optional[int]:
