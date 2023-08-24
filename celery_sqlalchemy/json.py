@@ -505,6 +505,38 @@ def postgresql_array_to_json(
     return value
 
 
+def postgresql_daterange_from_json(
+    field: Field, value: Optional[List[Any]]
+) -> Optional[List[Any]]:
+    return value
+
+
+def postgresql_daterange_params(column: Column) -> Any:
+    return
+
+
+def postgresql_daterange_to_json(
+    field: Field, value: Optional[List[Any]]
+) -> Optional[List[Any]]:
+    return value
+
+
+def postgresql_datemultirange_from_json(
+    field: Field, value: Optional[List[Any]]
+) -> Optional[List[Any]]:
+    return value
+
+
+def postgresql_datemultirange_params(column: Column) -> Any:
+    return
+
+
+def postgresql_datemultirange_to_json(
+    field: Field, value: Optional[List[Any]]
+) -> Optional[List[Any]]:
+    return value
+
+
 def postgresql_enum_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 

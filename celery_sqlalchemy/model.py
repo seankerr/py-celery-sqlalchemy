@@ -19,6 +19,8 @@ from typing import cast
 
 # dependency imports
 from sqlalchemy.dialects.postgresql import ARRAY as POSTGRESQL_ARRAY
+from sqlalchemy.dialects.postgresql import DATERANGE as POSTGRESQL_DATERANGE
+from sqlalchemy.dialects.postgresql import DATEMULTIRANGE as POSTGRESQL_DATEMULTIRANGE
 from sqlalchemy.dialects.postgresql import ENUM as POSTGRESQL_ENUM
 from sqlalchemy.dialects.postgresql import HSTORE as POSTGRESQL_HSTORE
 from sqlalchemy.dialects.postgresql import INT4RANGE as POSTGRESQL_INT4RANGE
@@ -252,6 +254,16 @@ type_maps = {
         from_json="postgresql_array_from_json",
         params="postgresql_array_params",
         to_json="postgresql_array_to_json",
+    ),
+    POSTGRESQL_DATERANGE: TypeMap(
+        from_json="postgresql_daterange_from_json",
+        params="postgresql_daterange_params",
+        to_json="postgresql_daterange_to_json",
+    ),
+    POSTGRESQL_DATEMULTIRANGE: TypeMap(
+        from_json="postgresql_datemultirange_from_json",
+        params="postgresql_datemultirange_params",
+        to_json="postgresql_datemultirange_to_json",
     ),
     POSTGRESQL_ENUM: TypeMap(
         from_json="postgresql_enum_from_json",
