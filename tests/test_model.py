@@ -71,13 +71,13 @@ def test_map_model(type: type) -> None:
     mapper = Mock(columns=[column])
     format_module = Mock()
 
+    from_json = Mock()
     params = Mock()
-    value_in = Mock()
-    value_out = Mock()
+    to_json = Mock()
 
+    setattr(format_module, type_maps[type].from_json, from_json)
     setattr(format_module, type_maps[type].params, params)
-    setattr(format_module, type_maps[type].value_in, value_in)
-    setattr(format_module, type_maps[type].value_out, value_out)
+    setattr(format_module, type_maps[type].to_json, to_json)
 
     schema = map_model(model, mapper, format_module)
 
@@ -85,11 +85,11 @@ def test_map_model(type: type) -> None:
 
     assert schema.fields == [
         Field(
+            from_json=from_json,
             name=column.name,
             params=params(),
+            to_json=to_json,
             type=type,
-            value_in=value_in,
-            value_out=value_out,
         )
     ]
 
@@ -180,79 +180,89 @@ def test_schema_map_key() -> None:
 @mark.parametrize(
     "type",
     [
-        [sqltypes.ARRAY, "array_params", "array_in", "array_out"],
+        [sqltypes.ARRAY, "array_from_json", "array_params", "array_to_json"],
         [
             sqltypes.BigInteger,
+            "big_integer_from_json",
             "big_integer_params",
-            "big_integer_in",
-            "big_integer_out",
+            "big_integer_to_json",
         ],
-        [sqltypes.Boolean, "boolean_params", "boolean_in", "boolean_out"],
-        [sqltypes.Date, "date_params", "date_in", "date_out"],
-        [sqltypes.DateTime, "date_time_params", "date_time_in", "date_time_out"],
-        [sqltypes.Double, "double_params", "double_in", "double_out"],
-        [sqltypes.Enum, "enum_params", "enum_in", "enum_out"],
-        [sqltypes.Float, "float_params", "float_in", "float_out"],
-        [sqltypes.Integer, "integer_params", "integer_in", "integer_out"],
-        [sqltypes.Interval, "interval_params", "interval_in", "interval_out"],
+        [sqltypes.Boolean, "boolean_from_json", "boolean_params", "boolean_to_json"],
+        [sqltypes.Date, "date_from_json", "date_params", "date_to_json"],
+        [
+            sqltypes.DateTime,
+            "date_time_from_json",
+            "date_time_params",
+            "date_time_to_json",
+        ],
+        [sqltypes.Double, "double_from_json", "double_params", "double_to_json"],
+        [sqltypes.Enum, "enum_from_json", "enum_params", "enum_to_json"],
+        [sqltypes.Float, "float_from_json", "float_params", "float_to_json"],
+        [sqltypes.Integer, "integer_from_json", "integer_params", "integer_to_json"],
+        [
+            sqltypes.Interval,
+            "interval_from_json",
+            "interval_params",
+            "interval_to_json",
+        ],
         [
             sqltypes.LargeBinary,
+            "large_binary_from_json",
             "large_binary_params",
-            "large_binary_in",
-            "large_binary_out",
+            "large_binary_to_json",
         ],
-        [sqltypes.JSON, "json_params", "json_in", "json_out"],
-        [sqltypes.Numeric, "numeric_params", "numeric_in", "numeric_out"],
+        [sqltypes.JSON, "json_from_json", "json_params", "json_to_json"],
+        [sqltypes.Numeric, "numeric_from_json", "numeric_params", "numeric_to_json"],
         [
             sqltypes.SmallInteger,
+            "small_integer_from_json",
             "small_integer_params",
-            "small_integer_in",
-            "small_integer_out",
+            "small_integer_to_json",
         ],
-        [sqltypes.String, "string_params", "string_in", "string_out"],
-        [sqltypes.Text, "text_params", "text_in", "text_out"],
-        [sqltypes.Time, "time_params", "time_in", "time_out"],
-        [sqltypes.Unicode, "unicode_params", "unicode_in", "unicode_out"],
+        [sqltypes.String, "string_from_json", "string_params", "string_to_json"],
+        [sqltypes.Text, "text_from_json", "text_params", "text_to_json"],
+        [sqltypes.Time, "time_from_json", "time_params", "time_to_json"],
+        [sqltypes.Unicode, "unicode_from_json", "unicode_params", "unicode_to_json"],
         [
             sqltypes.UnicodeText,
+            "unicode_text_from_json",
             "unicode_text_params",
-            "unicode_text_in",
-            "unicode_text_out",
+            "unicode_text_to_json",
         ],
-        [sqltypes.UUID, "uuid_params", "uuid_in", "uuid_out"],
+        [sqltypes.UUID, "uuid_from_json", "uuid_params", "uuid_to_json"],
         [
             POSTGRESQL_ARRAY,
+            "postgresql_array_from_json",
             "postgresql_array_params",
-            "postgresql_array_in",
-            "postgresql_array_out",
+            "postgresql_array_to_json",
         ],
         [
             POSTGRESQL_ENUM,
+            "postgresql_enum_from_json",
             "postgresql_enum_params",
-            "postgresql_enum_in",
-            "postgresql_enum_out",
+            "postgresql_enum_to_json",
         ],
         [
             POSTGRESQL_HSTORE,
+            "postgresql_hstore_from_json",
             "postgresql_hstore_params",
-            "postgresql_hstore_in",
-            "postgresql_hstore_out",
+            "postgresql_hstore_to_json",
         ],
         [
             POSTGRESQL_JSON,
+            "postgresql_json_from_json",
             "postgresql_json_params",
-            "postgresql_json_in",
-            "postgresql_json_out",
+            "postgresql_json_to_json",
         ],
         [
             POSTGRESQL_JSONB,
+            "postgresql_jsonb_from_json",
             "postgresql_jsonb_params",
-            "postgresql_jsonb_in",
-            "postgresql_jsonb_out",
+            "postgresql_jsonb_to_json",
         ],
     ],
 )
 def test_type_maps(type: List[Any]) -> None:
     assert type_maps[type[0]] == TypeMap(
-        params=type[1], value_in=type[2], value_out=type[3]
+        from_json=type[1], params=type[2], to_json=type[3]
     )

@@ -78,13 +78,13 @@ def map_model(model: DeclarativeBase, mapper: Mapper, interface: ModuleType) -> 
 
         fields.append(
             Field(
-                name=column.name,
-                params=get_params(column.type),
-                type=column.type.__class__,
-                value_in=getattr(interface, type_maps[column.type.__class__].value_in),
-                value_out=getattr(
-                    interface, type_maps[column.type.__class__].value_out
+                from_json=getattr(
+                    interface, type_maps[column.type.__class__].from_json
                 ),
+                name=column.name,
+                params=get_params(column),
+                to_json=getattr(interface, type_maps[column.type.__class__].to_json),
+                type=column.type.__class__,
             )
         )
 
@@ -145,9 +145,9 @@ def schema_map_key(model: DeclarativeBase) -> str:
 
 @dataclass(frozen=True)
 class TypeMap:
+    from_json: str
     params: Any
-    value_in: str
-    value_out: str
+    to_json: str
 
 
 type_maps = {
@@ -155,99 +155,111 @@ type_maps = {
     # Base SQLAlchemy types
     # ----------------------------------------------------------------------------------
     sqltypes.ARRAY: TypeMap(
-        params="array_params", value_in="array_in", value_out="array_out"
+        from_json="array_from_json", params="array_params", to_json="array_to_json"
     ),
     sqltypes.BigInteger: TypeMap(
+        from_json="big_integer_from_json",
         params="big_integer_params",
-        value_in="big_integer_in",
-        value_out="big_integer_out",
+        to_json="big_integer_to_json",
     ),
     sqltypes.Boolean: TypeMap(
-        params="boolean_params", value_in="boolean_in", value_out="boolean_out"
+        from_json="boolean_from_json",
+        params="boolean_params",
+        to_json="boolean_to_json",
     ),
     sqltypes.Date: TypeMap(
-        params="date_params", value_in="date_in", value_out="date_out"
+        from_json="date_from_json", params="date_params", to_json="date_to_json"
     ),
     sqltypes.DateTime: TypeMap(
-        params="date_time_params", value_in="date_time_in", value_out="date_time_out"
+        from_json="date_time_from_json",
+        params="date_time_params",
+        to_json="date_time_to_json",
     ),
     sqltypes.Double: TypeMap(
-        params="double_params", value_in="double_in", value_out="double_out"
+        from_json="double_from_json", params="double_params", to_json="double_to_json"
     ),
     sqltypes.Enum: TypeMap(
-        params="enum_params", value_in="enum_in", value_out="enum_out"
+        from_json="enum_from_json", params="enum_params", to_json="enum_to_json"
     ),
     sqltypes.Float: TypeMap(
-        params="float_params", value_in="float_in", value_out="float_out"
+        from_json="float_from_json", params="float_params", to_json="float_to_json"
     ),
     sqltypes.Integer: TypeMap(
-        params="integer_params", value_in="integer_in", value_out="integer_out"
+        from_json="integer_from_json",
+        params="integer_params",
+        to_json="integer_to_json",
     ),
     sqltypes.Interval: TypeMap(
-        params="interval_params", value_in="interval_in", value_out="interval_out"
+        from_json="interval_from_json",
+        params="interval_params",
+        to_json="interval_to_json",
     ),
     sqltypes.LargeBinary: TypeMap(
+        from_json="large_binary_from_json",
         params="large_binary_params",
-        value_in="large_binary_in",
-        value_out="large_binary_out",
+        to_json="large_binary_to_json",
     ),
     sqltypes.JSON: TypeMap(
-        params="json_params", value_in="json_in", value_out="json_out"
+        from_json="json_from_json", params="json_params", to_json="json_to_json"
     ),
     sqltypes.Numeric: TypeMap(
-        params="numeric_params", value_in="numeric_in", value_out="numeric_out"
+        from_json="numeric_from_json",
+        params="numeric_params",
+        to_json="numeric_to_json",
     ),
     sqltypes.SmallInteger: TypeMap(
+        from_json="small_integer_from_json",
         params="small_integer_params",
-        value_in="small_integer_in",
-        value_out="small_integer_out",
+        to_json="small_integer_to_json",
     ),
     sqltypes.String: TypeMap(
-        params="string_params", value_in="string_in", value_out="string_out"
+        from_json="string_from_json", params="string_params", to_json="string_to_json"
     ),
     sqltypes.Text: TypeMap(
-        params="text_params", value_in="text_in", value_out="text_out"
+        from_json="text_from_json", params="text_params", to_json="text_to_json"
     ),
     sqltypes.Time: TypeMap(
-        params="time_params", value_in="time_in", value_out="time_out"
+        from_json="time_from_json", params="time_params", to_json="time_to_json"
     ),
     sqltypes.Unicode: TypeMap(
-        params="unicode_params", value_in="unicode_in", value_out="unicode_out"
+        from_json="unicode_from_json",
+        params="unicode_params",
+        to_json="unicode_to_json",
     ),
     sqltypes.UnicodeText: TypeMap(
+        from_json="unicode_text_from_json",
         params="unicode_text_params",
-        value_in="unicode_text_in",
-        value_out="unicode_text_out",
+        to_json="unicode_text_to_json",
     ),
     sqltypes.UUID: TypeMap(
-        params="uuid_params", value_in="uuid_in", value_out="uuid_out"
+        from_json="uuid_from_json", params="uuid_params", to_json="uuid_to_json"
     ),
     # ----------------------------------------------------------------------------------
     # Dialect specific types
     # ----------------------------------------------------------------------------------
     POSTGRESQL_ARRAY: TypeMap(
+        from_json="postgresql_array_from_json",
         params="postgresql_array_params",
-        value_in="postgresql_array_in",
-        value_out="postgresql_array_out",
+        to_json="postgresql_array_to_json",
     ),
     POSTGRESQL_ENUM: TypeMap(
+        from_json="postgresql_enum_from_json",
         params="postgresql_enum_params",
-        value_in="postgresql_enum_in",
-        value_out="postgresql_enum_out",
+        to_json="postgresql_enum_to_json",
     ),
     POSTGRESQL_HSTORE: TypeMap(
+        from_json="postgresql_hstore_from_json",
         params="postgresql_hstore_params",
-        value_in="postgresql_hstore_in",
-        value_out="postgresql_hstore_out",
+        to_json="postgresql_hstore_to_json",
     ),
     POSTGRESQL_JSON: TypeMap(
+        from_json="postgresql_json_from_json",
         params="postgresql_json_params",
-        value_in="postgresql_json_in",
-        value_out="postgresql_json_out",
+        to_json="postgresql_json_to_json",
     ),
     POSTGRESQL_JSONB: TypeMap(
+        from_json="postgresql_jsonb_from_json",
         params="postgresql_jsonb_params",
-        value_in="postgresql_jsonb_in",
-        value_out="postgresql_jsonb_out",
+        to_json="postgresql_jsonb_to_json",
     ),
 }

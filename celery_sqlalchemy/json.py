@@ -10,16 +10,21 @@ from .model import schema_map_key
 from .schema import Field
 
 # system imports
+from collections import namedtuple
+
 from datetime import date
 from datetime import datetime
 from datetime import time
+from datetime import timedelta
 
 from decimal import Decimal
 
 from typing import Any
 from typing import Dict
 from typing import List
+from typing import Optional
 from typing import Union
+from typing import cast
 
 from uuid import UUID
 
@@ -53,7 +58,7 @@ def arg_from_json(arg: Any) -> Any:
 
         return schema.model(
             **{
-                field.name: field.value_in(field, arg.get(field.name))
+                field.name: field.from_json(field, arg.get(field.name))
                 for field in schema.fields
             }
         )
@@ -76,7 +81,7 @@ def arg_to_json(arg: Any) -> Any:
             schema = schema_for_model(arg, mapper, sys.modules[__name__])
 
             json = {
-                field.name: field.value_out(field, getattr(arg, field.name))
+                field.name: field.to_json(field, getattr(arg, field.name))
                 for field in schema.fields
             }
 
@@ -95,7 +100,7 @@ def initialize(
     celery: Celery,
     json_key: str = "$model_path$",
     naive_utc: bool = True,
-    utc_z: bool = True,
+    utc_z: bool = False,
 ) -> None:
     """
     Initialize the JSON module.
@@ -168,15 +173,19 @@ def message_to_args(
 
 
 # --------------------------------------------------------------------------------------
+# Params helpers
+# --------------------------------------------------------------------------------------
+
+NumericParams = namedtuple(
+    "NumericParams", "precision scale decimal_return_scale asdecimal"
+)
+
+# --------------------------------------------------------------------------------------
 # Standard serialization functions
 # --------------------------------------------------------------------------------------
 
 
-def array_in(field: Field, value: Any) -> Any:
-    return value
-
-
-def array_out(field: Field, value: Any) -> Any:
+def array_from_json(field: Field, value: Optional[List[Any]]) -> Optional[List[Any]]:
     return value
 
 
@@ -184,11 +193,11 @@ def array_params(column: Column) -> Any:
     return
 
 
-def big_integer_in(field: Field, value: Any) -> Any:
+def array_to_json(field: Field, value: Optional[List[Any]]) -> Optional[List[Any]]:
     return value
 
 
-def big_integer_out(field: Field, value: Any) -> Any:
+def big_integer_from_json(field: Field, value: Optional[int]) -> Optional[int]:
     return value
 
 
@@ -196,11 +205,11 @@ def big_integer_params(column: Column) -> Any:
     return
 
 
-def boolean_in(field: Field, value: Any) -> Any:
+def big_integer_to_json(field: Field, value: Optional[int]) -> Optional[int]:
     return value
 
 
-def boolean_out(field: Field, value: Any) -> Any:
+def boolean_from_json(field: Field, value: Optional[bool]) -> Optional[bool]:
     return value
 
 
@@ -208,50 +217,68 @@ def boolean_params(column: Column) -> Any:
     return
 
 
-def date_in(field: Field, value: Any) -> Any:
-    return date.fromisoformat(value)
-
-
-def date_out(field: Field, value: Any) -> Any:
+def boolean_to_json(field: Field, value: Optional[bool]) -> Optional[bool]:
     return value
+
+
+def date_from_json(field: Field, value: Optional[str]) -> Optional[date]:
+    if value is None:
+        return None
+
+    return date.fromisoformat(value)
 
 
 def date_out_params(column: Column) -> Any:
     return
 
 
-def date_time_in(field: Field, value: Any) -> Any:
+def date_to_json(field: Field, value: Optional[date]) -> Optional[date]:
+    return value
+
+
+def date_time_from_json(field: Field, value: Optional[str]) -> Optional[datetime]:
     if value is None:
         return None
 
     return datetime.fromisoformat(value)
 
 
-def date_time_out(field: Field, value: Any) -> Any:
-    return value
-
-
 def date_time_params(column: Column) -> Any:
     return
 
 
-def double_in(field: Field, value: Any) -> Any:
+def date_time_to_json(field: Field, value: Optional[datetime]) -> Optional[datetime]:
     return value
 
 
-def double_out(field: Field, value: Any) -> Any:
-    return value
+def double_from_json(
+    field: Field[NumericParams], value: Optional[Union[float, str]]
+) -> Optional[Union[Decimal, float]]:
+    if value is None:
+        return None
+
+    return 0
 
 
-def double_params(column: Column) -> Any:
-    return
+def double_params(column: Column) -> NumericParams:
+    return NumericParams(
+        cast(Any, column.type).precision,
+        None,
+        cast(Any, column.type).decimal_return_scale,
+        cast(Any, column.type).asdecimal,
+    )
 
 
-def enum_in(field: Field, value: Any) -> Any:
-    return value
+def double_to_json(
+    field: Field[NumericParams], value: Optional[Union[Decimal, float]]
+) -> Optional[Union[float, str]]:
+    if value is None:
+        return None
+
+    return 0
 
 
-def enum_out(field: Field, value: Any) -> Any:
+def enum_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 
@@ -259,23 +286,38 @@ def enum_params(column: Column) -> Any:
     return
 
 
-def float_in(field: Field, value: Any) -> Any:
+def enum_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 
-def float_out(field: Field, value: Any) -> Any:
-    return value
+def float_from_json(
+    field: Field[NumericParams], value: Optional[Union[float, str]]
+) -> Optional[Union[Decimal, float]]:
+    if value is None:
+        return None
+
+    return 0
 
 
-def float_params(column: Column) -> Any:
-    return
+def float_params(column: Column) -> NumericParams:
+    return NumericParams(
+        cast(Any, column.type).precision,
+        None,
+        cast(Any, column.type).decimal_return_scale,
+        cast(Any, column.type).asdecimal,
+    )
 
 
-def integer_in(field: Field, value: Any) -> Any:
-    return value
+def float_to_json(
+    field: Field[NumericParams], value: Optional[Union[Decimal, float]]
+) -> Optional[Union[float, str]]:
+    if value is None:
+        return None
+
+    return 0
 
 
-def integer_out(field: Field, value: Any) -> Any:
+def integer_from_json(field: Field, value: Optional[int]) -> Optional[int]:
     return value
 
 
@@ -283,23 +325,29 @@ def integer_params(column: Column) -> Any:
     return
 
 
-def interval_in(field: Field, value: Any) -> Any:
+def integer_to_json(field: Field, value: Optional[int]) -> Optional[int]:
     return value
 
 
-def interval_out(field: Field, value: Any) -> Any:
-    return value
+def interval_from_json(field: Field, value: Optional[List[int]]) -> Optional[timedelta]:
+    if value is None:
+        return None
+
+    return timedelta(hours=value[0], seconds=value[1], microseconds=value[2])
 
 
 def interval_params(column: Column) -> Any:
     return
 
 
-def large_binary_in(field: Field, value: Any) -> Any:
-    return value
+def interval_to_json(field: Field, value: Optional[timedelta]) -> Optional[List[int]]:
+    if value is None:
+        return None
+
+    return [value.days, value.seconds, value.microseconds]
 
 
-def large_binary_out(field: Field, value: Any) -> Any:
+def large_binary_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 
@@ -307,11 +355,11 @@ def large_binary_params(column: Column) -> Any:
     return
 
 
-def json_in(field: Field, value: Any) -> Any:
+def large_binary_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 
-def json_out(field: Field, value: Any) -> Any:
+def json_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 
@@ -319,23 +367,38 @@ def json_params(column: Column) -> Any:
     return
 
 
-def numeric_in(field: Field, value: Any) -> Any:
-    return Decimal(value)
-
-
-def numeric_out(field: Field, value: Any) -> Any:
-    return str(value)
-
-
-def numeric_params(column: Column) -> Any:
-    return
-
-
-def small_integer_in(field: Field, value: Any) -> Any:
+def json_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 
-def small_integer_out(field: Field, value: Any) -> Any:
+def numeric_from_json(
+    field: Field[NumericParams], value: Optional[Union[float, str]]
+) -> Optional[Union[Decimal, float]]:
+    if value is None:
+        return None
+
+    return 0
+
+
+def numeric_params(column: Column) -> NumericParams:
+    return NumericParams(
+        cast(Any, column.type).precision,
+        cast(Any, column.type).scale,
+        cast(Any, column.type).decimal_return_scale,
+        cast(Any, column.type).asdecimal,
+    )
+
+
+def numeric_to_json(
+    field: Field[NumericParams], value: Optional[Union[Decimal, float]]
+) -> Optional[Union[float, str]]:
+    if value is None:
+        return None
+
+    return 0
+
+
+def small_integer_from_json(field: Field, value: Optional[int]) -> Optional[int]:
     return value
 
 
@@ -343,11 +406,11 @@ def small_integer_params(column: Column) -> Any:
     return
 
 
-def string_in(field: Field, value: Any) -> Any:
+def small_integer_to_json(field: Field, value: Optional[int]) -> Optional[int]:
     return value
 
 
-def string_out(field: Field, value: Any) -> Any:
+def string_from_json(field: Field, value: Optional[str]) -> Optional[str]:
     return value
 
 
@@ -355,11 +418,11 @@ def string_params(column: Column) -> Any:
     return
 
 
-def text_in(field: Field, value: Any) -> Any:
+def string_to_json(field: Field, value: Optional[str]) -> Optional[str]:
     return value
 
 
-def text_out(field: Field, value: Any) -> Any:
+def text_from_json(field: Field, value: Optional[str]) -> Optional[str]:
     return value
 
 
@@ -367,23 +430,26 @@ def text_params(column: Column) -> Any:
     return
 
 
-def time_in(field: Field, value: Any) -> Any:
-    return time.fromisoformat(value)
-
-
-def time_out(field: Field, value: Any) -> Any:
+def text_to_json(field: Field, value: Optional[str]) -> Optional[str]:
     return value
+
+
+def time_from_json(field: Field, value: Optional[str]) -> Optional[time]:
+    if value is None:
+        return None
+
+    return time.fromisoformat(value)
 
 
 def time_params(column: Column) -> Any:
     return
 
 
-def unicode_in(field: Field, value: Any) -> Any:
+def time_to_json(field: Field, value: Optional[time]) -> Optional[time]:
     return value
 
 
-def unicode_out(field: Field, value: Any) -> Any:
+def unicode_from_json(field: Field, value: Optional[str]) -> Optional[str]:
     return value
 
 
@@ -391,11 +457,11 @@ def unicode_params(column: Column) -> Any:
     return
 
 
-def unicode_text_in(field: Field, value: Any) -> Any:
+def unicode_to_json(field: Field, value: Optional[str]) -> Optional[str]:
     return value
 
 
-def unicode_text_out(field: Field, value: Any) -> Any:
+def unicode_text_from_json(field: Field, value: Optional[str]) -> Optional[str]:
     return value
 
 
@@ -403,16 +469,26 @@ def unicode_text_params(column: Column) -> Any:
     return
 
 
-def uuid_in(field: Field, value: Any) -> Any:
-    return UUID(value)
-
-
-def uuid_out(field: Field, value: Any) -> Any:
+def unicode_text_to_json(field: Field, value: Optional[str]) -> Optional[str]:
     return value
+
+
+def uuid_from_json(field: Field, value: Optional[str]) -> Optional[UUID]:
+    if value is None:
+        return None
+
+    return UUID(value)
 
 
 def uuid_params(column: Column) -> Any:
     return
+
+
+def uuid_to_json(field: Field, value: Optional[UUID]) -> Optional[str]:
+    if value is None:
+        return None
+
+    return str(value)
 
 
 # --------------------------------------------------------------------------------------
@@ -420,41 +496,65 @@ def uuid_params(column: Column) -> Any:
 # --------------------------------------------------------------------------------------
 
 
-def postgresql_array_in(field: Field, value: Any) -> Any:
+def postgresql_array_from_json(
+    field: Field, value: Optional[List[Any]]
+) -> Optional[List[Any]]:
     return value
 
 
-def postgresql_array_out(field: Field, value: Any) -> Any:
+def postgresql_array_params(column: Column) -> Any:
+    return
+
+
+def postgresql_array_to_json(
+    field: Field, value: Optional[List[Any]]
+) -> Optional[List[Any]]:
     return value
 
 
-def postgresql_enum_in(field: Field, value: Any) -> Any:
+def postgresql_enum_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 
-def postgresql_enum_out(field: Field, value: Any) -> Any:
+def postgresql_enum_params(column: Column) -> Any:
+    return
+
+
+def postgresql_enum_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 
-def postgresql_hstore_in(field: Field, value: Any) -> Any:
+def postgresql_hstore_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 
-def postgresql_hstore_out(field: Field, value: Any) -> Any:
+def postgresql_hstore_params(column: Column) -> Any:
+    return
+
+
+def postgresql_hstore_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 
-def postgresql_json_in(field: Field, value: Any) -> Any:
+def postgresql_json_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 
-def postgresql_json_out(field: Field, value: Any) -> Any:
+def postgresql_json_params(column: Column) -> Any:
+    return
+
+
+def postgresql_json_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 
-def postgresql_jsonb_in(field: Field, value: Any) -> Any:
+def postgresql_jsonb_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value
 
 
-def postgresql_jsonb_out(field: Field, value: Any) -> Any:
+def postgresql_jsonb_params(column: Column) -> Any:
+    return
+
+
+def postgresql_jsonb_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
     return value

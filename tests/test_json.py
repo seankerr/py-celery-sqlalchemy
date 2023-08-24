@@ -44,8 +44,8 @@ def test_arg_from_json__model(
     assert arg_from_json(arg) == schema.model.return_value
 
     schema_for_model_path.assert_called_with(model_path, sys.modules[__name__])
-    field.value_in.assert_called_with(field, name)
-    schema.model.assert_called_with(name=field.value_in())
+    field.from_json.assert_called_with(field, name)
+    schema.model.assert_called_with(name=field.from_json())
 
 
 def test_arg_from_json__other_than_model() -> None:
@@ -76,12 +76,12 @@ def test_arg_to_json__model(
 
     assert arg_to_json(arg) == {
         "$model_path$": schema_map_key.return_value,
-        field.name: field.value_out.return_value,
+        field.name: field.to_json.return_value,
     }
 
     inspect.assert_called_with(arg)
     schema_for_model.assert_called_with(arg, inspect().mapper, sys.modules[__name__])
-    field.value_out.assert_called_with(field, arg.name)
+    field.to_json.assert_called_with(field, arg.name)
     schema_map_key.assert_called_with(arg)
 
 
@@ -125,7 +125,7 @@ def test_initialize(
     from celery_sqlalchemy.json import orjson_opts
 
     assert json_module_key == "$model_path$"
-    assert orjson_opts == orjson.OPT_NAIVE_UTC | orjson.OPT_UTC_Z
+    assert orjson_opts == orjson.OPT_NAIVE_UTC
 
 
 @patch(f"{PATH}.orjson")

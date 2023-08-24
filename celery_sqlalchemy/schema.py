@@ -9,16 +9,20 @@ from dataclasses import dataclass
 
 from typing import Any
 from typing import Callable
+from typing import Generic
 from typing import List
+from typing import TypeVar
+
+T = TypeVar("T")
 
 
 @dataclass(frozen=True)
-class Field:
+class Field(Generic[T]):
+    from_json: Callable
     name: str
-    params: Any
+    params: T
+    to_json: Callable
     type: type
-    value_in: Callable
-    value_out: Callable
 
 
 @dataclass(frozen=True)

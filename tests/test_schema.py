@@ -11,7 +11,7 @@ from unittest.mock import Mock
 
 
 def test_field() -> None:
-    Field(name=Mock(), params=Mock(), type=Mock(), value_in=Mock(), value_out=Mock())
+    Field(from_json=Mock(), name=Mock(), params=Mock(), to_json=Mock(), type=Mock())
 
 
 def test_schema() -> None:
