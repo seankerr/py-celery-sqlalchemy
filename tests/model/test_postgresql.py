@@ -3,7 +3,7 @@
 # --------------------------------------------------------------------------------------
 
 # celery-sqlalchemy types
-from celery_sqlalchemy.model_postgresql import postgresql_type_maps
+from celery_sqlalchemy.model.postgresql import postgresql_type_maps
 
 from celery_sqlalchemy.schema import TypeMap
 

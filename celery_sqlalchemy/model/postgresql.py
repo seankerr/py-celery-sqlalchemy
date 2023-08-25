@@ -3,7 +3,7 @@
 # --------------------------------------------------------------------------------------
 
 # celery-sqlalchemy imports
-from .schema import TypeMap
+from ..schema import TypeMap
 
 # dependency imports
 from sqlalchemy.dialects.postgresql import ARRAY as POSTGRESQL_ARRAY
