@@ -34,7 +34,10 @@ celery = ...
 initialize(celery)
 
 # dispatch a task
-task.delay(Model())
+author = "Alan Watts"
+title = "Become What You Are"
+
+task.delay(Model(author=author, title=title))
 ```
 
 ### Using the json+sqlalchemy content type in combination with other content types
