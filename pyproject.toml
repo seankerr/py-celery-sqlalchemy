@@ -12,6 +12,9 @@ packages = [{include = "celery_sqlalchemy"}]
 [tool.poetry.dependencies]
 python = "^3.9"
 
+orjson = ">=3.9.4"
+sqlalchemy = ">=2.0.20"
+
 [virtualenvs]
 in-project = true
 
