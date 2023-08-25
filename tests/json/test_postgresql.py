@@ -7,6 +7,9 @@ from celery_sqlalchemy.json import postgresql
 
 # system imports
 from unittest.mock import Mock
+from unittest.mock import patch
+
+PATH = "celery_sqlalchemy.json.postgresql"
 
 
 def test_postgresql_array_from_json() -> None:
@@ -349,44 +352,79 @@ def test_postgresql_interval_to_json() -> None:
     assert postgresql.postgresql_interval_to_json(field, value) == value
 
 
-def test_postgresql_json_from_json() -> None:
+@patch(f"{PATH}.sqlalchemy")
+def test_postgresql_json_from_json(sqlalchemy: Mock) -> None:
     field = Mock()
     value = Mock()
 
-    assert postgresql.postgresql_json_from_json(field, value) == value
+    assert (
+        postgresql.postgresql_json_from_json(field, value)
+        == sqlalchemy.json_from_json.return_value
+    )
+
+    sqlalchemy.json_from_json.assert_called_with(field, value)
 
 
-def test_postgresql_json_params() -> None:
+@patch(f"{PATH}.sqlalchemy")
+def test_postgresql_json_params(sqlalchemy: Mock) -> None:
     column = Mock()
 
-    assert not postgresql.postgresql_json_params(column)
+    assert (
+        postgresql.postgresql_json_params(column) == sqlalchemy.json_params.return_value
+    )
+
+    sqlalchemy.json_params.assert_called_with(column)
 
 
-def test_postgresql_json_to_json() -> None:
+@patch(f"{PATH}.sqlalchemy")
+def test_postgresql_json_to_json(sqlalchemy: Mock) -> None:
     field = Mock()
     value = Mock()
 
-    assert postgresql.postgresql_json_to_json(field, value) == value
+    assert (
+        postgresql.postgresql_json_to_json(field, value)
+        == sqlalchemy.json_to_json.return_value
+    )
+
+    sqlalchemy.json_to_json.assert_called_with(field, value)
 
 
-def test_postgresql_jsonb_from_json() -> None:
+@patch(f"{PATH}.sqlalchemy")
+def test_postgresql_jsonb_from_json(sqlalchemy: Mock) -> None:
     field = Mock()
     value = Mock()
 
-    assert postgresql.postgresql_jsonb_from_json(field, value) == value
+    assert (
+        postgresql.postgresql_jsonb_from_json(field, value)
+        == sqlalchemy.json_from_json.return_value
+    )
+
+    sqlalchemy.json_from_json.assert_called_with(field, value)
 
 
-def test_postgresql_jsonb_params() -> None:
+@patch(f"{PATH}.sqlalchemy")
+def test_postgresql_jsonb_params(sqlalchemy: Mock) -> None:
     column = Mock()
 
-    assert not postgresql.postgresql_jsonb_params(column)
+    assert (
+        postgresql.postgresql_jsonb_params(column)
+        == sqlalchemy.json_params.return_value
+    )
+
+    sqlalchemy.json_params.assert_called_with(column)
 
 
-def test_postgresql_jsonb_to_json() -> None:
+@patch(f"{PATH}.sqlalchemy")
+def test_postgresql_jsonb_to_json(sqlalchemy: Mock) -> None:
     field = Mock()
     value = Mock()
 
-    assert postgresql.postgresql_jsonb_to_json(field, value) == value
+    assert (
+        postgresql.postgresql_jsonb_to_json(field, value)
+        == sqlalchemy.json_to_json.return_value
+    )
+
+    sqlalchemy.json_to_json.assert_called_with(field, value)
 
 
 def test_postgresql_jsonpath_from_json() -> None:

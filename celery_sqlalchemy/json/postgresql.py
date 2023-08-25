@@ -5,6 +5,8 @@
 # celery-sqlalchemy imports
 from ..schema import Field
 
+from . import sqlalchemy
+
 # system imports
 from typing import Any
 from typing import List
@@ -243,27 +245,27 @@ def postgresql_interval_to_json(field: Field, value: Optional[Any]) -> Optional[
 
 
 def postgresql_json_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
-    return value
+    return sqlalchemy.json_from_json(field, value)
 
 
 def postgresql_json_params(column: Column) -> Any:
-    return
+    return sqlalchemy.json_params(column)
 
 
 def postgresql_json_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
-    return value
+    return sqlalchemy.json_to_json(field, value)
 
 
 def postgresql_jsonb_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:
-    return value
+    return sqlalchemy.json_from_json(field, value)
 
 
 def postgresql_jsonb_params(column: Column) -> Any:
-    return
+    return sqlalchemy.json_params(column)
 
 
 def postgresql_jsonb_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
-    return value
+    return sqlalchemy.json_to_json(field, value)
 
 
 def postgresql_jsonpath_from_json(field: Field, value: Optional[Any]) -> Optional[Any]:

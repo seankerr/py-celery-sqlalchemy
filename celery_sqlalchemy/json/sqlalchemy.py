@@ -198,6 +198,8 @@ def json_params(column: Column) -> Any:
 
 
 def json_to_json(field: Field, value: Optional[Any]) -> Optional[Any]:
+    print(dir(value))
+
     return value
 
 
