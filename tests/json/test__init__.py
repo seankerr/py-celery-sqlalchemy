@@ -106,16 +106,16 @@ def test_initialize(
 
     json.initialize(celery)
 
-    assert celery.conf.accept_content == ["json+sqlalchemy"]
-    assert celery.conf.result_accept_content == ["json+sqlalchemy"]
-    assert celery.conf.task_serializer == "json+sqlalchemy"
-
     serialization.register.assert_called_with(
         "json+sqlalchemy",
         message_from_args,
         message_to_args,
         "json",
     )
+
+    assert celery.conf.accept_content == ["json+sqlalchemy"]
+    assert celery.conf.result_accept_content == ["json+sqlalchemy"]
+    assert celery.conf.task_serializer == "json+sqlalchemy"
 
     from celery_sqlalchemy.json import json_module_key
     from celery_sqlalchemy.json import orjson_opts
@@ -128,7 +128,59 @@ def test_initialize(
 @patch(f"{PATH}.serialization")
 @patch(f"{PATH}.message_from_args")
 @patch(f"{PATH}.message_to_args")
-def test_initialize__toggle_naive_utc(
+def test_initialize__set_apply_serializer(
+    message_to_args: Mock, message_from_args: Mock, serialization: Mock
+) -> None:
+    celery = Mock()
+
+    json.initialize(celery, apply_serializer=False)
+
+    assert isinstance(celery.conf.accept_content, Mock)
+    assert isinstance(celery.conf.result_accept_content, Mock)
+    assert isinstance(celery.conf.task_serializer, Mock)
+
+
+@patch(f"{PATH}.serialization")
+@patch(f"{PATH}.message_from_args")
+@patch(f"{PATH}.message_to_args")
+def test_initialize__set_content_type(
+    message_to_args: Mock, message_from_args: Mock, serialization: Mock
+) -> None:
+    celery = Mock()
+
+    json.initialize(celery, content_type="test")
+
+    serialization.register.assert_called_with(
+        "test",
+        message_from_args,
+        message_to_args,
+        "json",
+    )
+
+    assert celery.conf.accept_content == ["test"]
+    assert celery.conf.result_accept_content == ["test"]
+    assert celery.conf.task_serializer == "test"
+
+
+@patch(f"{PATH}.serialization")
+@patch(f"{PATH}.message_from_args")
+@patch(f"{PATH}.message_to_args")
+def test_initialize__set_json_key(
+    message_to_args: Mock, message_from_args: Mock, serialization: Mock
+) -> None:
+    celery = Mock()
+
+    json.initialize(celery, json_key="test")
+
+    from celery_sqlalchemy.json import json_module_key
+
+    assert json_module_key == "test"
+
+
+@patch(f"{PATH}.serialization")
+@patch(f"{PATH}.message_from_args")
+@patch(f"{PATH}.message_to_args")
+def test_initialize__set_naive_utc(
     message_to_args: Mock, message_from_args: Mock, serialization: Mock
 ) -> None:
     celery = Mock()
@@ -143,7 +195,7 @@ def test_initialize__toggle_naive_utc(
 @patch(f"{PATH}.serialization")
 @patch(f"{PATH}.message_from_args")
 @patch(f"{PATH}.message_to_args")
-def test_initialize__toggle_utc_z(
+def test_initialize__set_utc_z(
     message_to_args: Mock, message_from_args: Mock, serialization: Mock
 ) -> None:
     celery = Mock()

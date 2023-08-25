@@ -85,6 +85,8 @@ def arg_to_json(arg: Any) -> Any:
 def initialize(
     celery: Celery,
     json_key: str = "$model_path$",
+    content_type: str = "json+sqlalchemy",
+    apply_serializer: bool = True,
     naive_utc: bool = True,
     utc_z: bool = False,
 ) -> None:
@@ -94,6 +96,8 @@ def initialize(
     Parameters:
         celery (Celery): Celery instance.
         json_key (str): The key used to store the model path during serialization.
+        content_type (str): The content type to use for this serializer.
+        apply_serializer (bool): Apply the task serializer settings globally.
         naive_utc (bool): Enable orjson OPT_NAIVE_UTC.
         utc_z (bool): Enable orjson OPT_UTC_Z.
     """
@@ -109,16 +113,17 @@ def initialize(
     if utc_z:
         orjson_opts |= orjson.OPT_UTC_Z
 
-    celery.conf.accept_content = ["json+sqlalchemy"]
-    celery.conf.result_accept_content = ["json+sqlalchemy"]
-    celery.conf.task_serializer = "json+sqlalchemy"
-
     serialization.register(
-        "json+sqlalchemy",
+        content_type,
         message_from_args,
         message_to_args,
         "json",
     )
+
+    if apply_serializer:
+        celery.conf.accept_content = [content_type]
+        celery.conf.result_accept_content = [content_type]
+        celery.conf.task_serializer = content_type
 
 
 def message_from_args(args: Union[str, Dict[str, Any], List[Any]]) -> bytes:
