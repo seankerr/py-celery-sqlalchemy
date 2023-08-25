@@ -3,7 +3,7 @@
 # --------------------------------------------------------------------------------------
 
 # celery-sqlalchemy imports
-from .schema import Field
+from ..schema import Field
 
 # system imports
 from typing import Any
