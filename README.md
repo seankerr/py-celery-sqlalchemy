@@ -11,8 +11,7 @@ pip install celery-sqlalchemy
 ### How does it work?
 
 Any model or list of models passed to a celery task as a direct argument will be
-serialized/deserialized by the `json+sqlalchemy` content type provided by
-`celery-sqlalchemy`.
+serialized/deserialized by `celery-sqlalchemy`.
 
 ### Behind the scenes
 
