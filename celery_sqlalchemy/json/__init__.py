@@ -7,6 +7,8 @@ from ..model import schema_for_model
 from ..model import schema_for_model_path
 from ..model import schema_map_key
 
+from .. import errors
+
 # system imports
 from collections import namedtuple
 
@@ -76,10 +78,12 @@ def arg_to_json(arg: Any) -> Any:
             return json
 
         except NoInspectionAvailable:
-            return arg
+            pass
 
-    else:
-        return arg
+    elif isinstance(arg, set):
+        return list(arg)
+
+    raise errors.SerializationError(f"Cannot serialize type '{arg.__class__.__name__}'")
 
 
 def initialize(

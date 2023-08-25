@@ -3,11 +3,11 @@
 # --------------------------------------------------------------------------------------
 
 # celery-sqlalchemy types
+from celery_sqlalchemy import errors
 from celery_sqlalchemy import json
 
 # system imports
 from typing import Any
-from typing import Dict
 from typing import List
 
 from unittest.mock import Mock
@@ -15,6 +15,8 @@ from unittest.mock import call
 from unittest.mock import patch
 
 # dependency imports
+from pytest import raises
+
 import orjson
 
 PATH = "celery_sqlalchemy.json"
@@ -81,19 +83,31 @@ def test_arg_to_json__model(
     schema_map_key.assert_called_with(arg)
 
 
-def test_arg_to_json__other_than_model() -> None:
-    arg: Dict[Any, Any] = {}
-
-    assert json.arg_to_json(arg) == arg
+def test_arg_to_json__set() -> None:
+    assert json.arg_to_json({"test"}) == ["test"]
 
 
-def test_arg_to_json__other_than_model__instance_is_not_model() -> None:
-    class InvalidModel:
+def test_arg_to_json__unserializable_with_table__raises_serialization_error() -> None:
+    class Model:
         __table__ = "invalid"
 
-    arg = InvalidModel()
+    arg = Model()
 
-    assert json.arg_to_json(arg) == arg
+    with raises(errors.SerializationError) as ex:
+        assert json.arg_to_json(arg)
+
+    assert str(ex.value) == f"Cannot serialize type '{arg.__class__.__name__}'"
+
+
+def test_arg_to_json__unserializable_without_table__raises_serialization_error() -> (
+    None
+):
+    arg = object()
+
+    with raises(errors.SerializationError) as ex:
+        assert json.arg_to_json(arg)
+
+    assert str(ex.value) == f"Cannot serialize type '{arg.__class__.__name__}'"
 
 
 @patch(f"{PATH}.serialization")

@@ -3,6 +3,12 @@
 # --------------------------------------------------------------------------------------
 
 
+class SerializationError(Exception):
+    """Type cannot be serialized."""
+
+    pass
+
+
 class UnsupportedInterfaceError(Exception):
     """Serialization interface specified is unsupported."""
 
