@@ -3,6 +3,9 @@
 # --------------------------------------------------------------------------------------
 
 # celery-sqlalchemy types
+from celery_sqlalchemy.model.postgresql import postgresql_type_maps
+from celery_sqlalchemy.model.sqlalchemy import sqlalchemy_type_maps
+
 from celery_sqlalchemy.model import add_schema
 from celery_sqlalchemy.model import load_model
 from celery_sqlalchemy.model import map_model
@@ -163,3 +166,10 @@ def test_schema_map_key() -> None:
     model = Mock()
 
     assert schema_map_key(model) == f"{model.__module__}.{model.__class__.__name__}"
+
+
+def test_type_maps() -> None:
+    assert type_maps == {
+        **sqlalchemy_type_maps,
+        **postgresql_type_maps,
+    }
