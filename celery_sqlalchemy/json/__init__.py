@@ -10,6 +10,8 @@ from ..model import schema_map_key
 from .. import errors
 
 # system imports
+from collections.abc import Iterable
+
 from collections import namedtuple
 
 from typing import Any
@@ -50,6 +52,9 @@ def arg_from_json(arg: Any) -> Any:
                 for field in schema.fields
             }
         )
+
+    elif isinstance(arg, Iterable):
+        return [arg_from_json(item) for item in arg]
 
     else:
         return arg

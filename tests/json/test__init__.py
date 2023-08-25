@@ -22,6 +22,15 @@ import orjson
 PATH = "celery_sqlalchemy.json"
 
 
+def test_arg_from_json__iterable() -> None:
+    arg = [Mock()]
+
+    result = json.arg_from_json(arg)
+
+    assert result == arg
+    assert id(result) != id(arg)
+
+
 @patch(f"{PATH}.__name__")
 @patch(f"{PATH}.sys")
 @patch(f"{PATH}.schema_for_model_path")
