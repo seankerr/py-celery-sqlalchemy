@@ -203,31 +203,61 @@ def test_initialize__set_json_key(
 @patch(f"{PATH}.serialization")
 @patch(f"{PATH}.message_from_args")
 @patch(f"{PATH}.message_to_args")
-def test_initialize__set_naive_utc(
+def test_initialize__set_naive_utc_false(
     message_to_args: Mock, message_from_args: Mock, serialization: Mock
 ) -> None:
     celery = Mock()
 
+    json.orjson_opts = 0
+
     json.initialize(celery, naive_utc=False)
 
-    from celery_sqlalchemy.json import orjson_opts
-
-    assert orjson_opts & orjson.OPT_NAIVE_UTC == 0
+    assert json.orjson_opts & orjson.OPT_NAIVE_UTC == 0
 
 
 @patch(f"{PATH}.serialization")
 @patch(f"{PATH}.message_from_args")
 @patch(f"{PATH}.message_to_args")
-def test_initialize__set_utc_z(
+def test_initialize__set_naive_utc_true(
     message_to_args: Mock, message_from_args: Mock, serialization: Mock
 ) -> None:
     celery = Mock()
 
-    json.initialize(celery, naive_utc=False, utc_z=True)
+    json.orjson_opts = 0
 
-    from celery_sqlalchemy.json import orjson_opts
+    json.initialize(celery, naive_utc=True)
 
-    assert orjson_opts & orjson.OPT_UTC_Z == orjson.OPT_UTC_Z
+    assert json.orjson_opts & orjson.OPT_NAIVE_UTC == orjson.OPT_NAIVE_UTC
+
+
+@patch(f"{PATH}.serialization")
+@patch(f"{PATH}.message_from_args")
+@patch(f"{PATH}.message_to_args")
+def test_initialize__set_utc_z_false(
+    message_to_args: Mock, message_from_args: Mock, serialization: Mock
+) -> None:
+    celery = Mock()
+
+    json.orjson_opts = 0
+
+    json.initialize(celery, utc_z=False)
+
+    assert json.orjson_opts & orjson.OPT_UTC_Z == 0
+
+
+@patch(f"{PATH}.serialization")
+@patch(f"{PATH}.message_from_args")
+@patch(f"{PATH}.message_to_args")
+def test_initialize__set_utc_z_true(
+    message_to_args: Mock, message_from_args: Mock, serialization: Mock
+) -> None:
+    celery = Mock()
+
+    json.orjson_opts = 0
+
+    json.initialize(celery, utc_z=True)
+
+    assert json.orjson_opts & orjson.OPT_UTC_Z == orjson.OPT_UTC_Z
 
 
 @patch(f"{PATH}.orjson")
