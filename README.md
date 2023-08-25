@@ -17,7 +17,7 @@ serialized/deserialized by the `json+sqlalchemy` content type provided by
 ### Behind the scenes
 
 The [orjson](https://github.com/ijl/orjson) library is used behind the scenes to handle
-serialization of Python types.
+serialization of commonly used Python types.
 
 ### Usage
 
