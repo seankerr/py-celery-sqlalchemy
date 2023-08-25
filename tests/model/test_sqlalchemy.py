@@ -16,8 +16,6 @@ from pytest import mark
 
 from sqlalchemy.sql import sqltypes
 
-PATH = "celery_sqlalchemy.model.sqlalchemy"
-
 
 @mark.parametrize(
     "type",
