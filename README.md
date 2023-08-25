@@ -11,7 +11,7 @@ pip install celery-sqlalchemy
 ### How does it work?
 
 Any model or list of models passed to a celery task as a direct argument will be
-serialized/deserialized by the `json+sqlalchemy` content type serializer provided by
+serialized/deserialized by the `json+sqlalchemy` content type provided by
 `celery-sqlalchemy`.
 
 ### Behind the scenes
@@ -59,12 +59,12 @@ celery.conf.result_accept_content = ["json+sqlalchemy", "your content type"]
 celery.conf.task_serializer = "json+sqlalchemy"
 
 # dispatch a model task
-task.delay(Model())
-
-# dispatch a task using another content type
 author = "Alan Watts"
 title = "Become What You Are"
 
+task.delay(Model(author=author, title=title))
+
+# dispatch a task using another content type
 task.apply_async((author, title), serializer="your content type")
 ```
 
@@ -85,12 +85,12 @@ celery.conf.accept_content = ["json+sqlalchemy", "your content type"]
 celery.conf.result_accept_content = ["json+sqlalchemy", "your content type"]
 
 # dispatch a model task
-task.apply_async((Model(), Model()), serializer="json+sqlalchemy")
-
-# dispatch a task using another content type
 author = "Alan Watts"
 title = "Become What You Are"
 
+task.apply_async((Model(author=author, title=title),), serializer="json+sqlalchemy")
+
+# dispatch a task using another content type
 task.apply_async((author, title), serializer="your content type")
 ```
 
