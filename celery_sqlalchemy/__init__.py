@@ -13,8 +13,6 @@ from . import errors
 from importlib import import_module
 
 from typing import Any
-from typing import Dict
-from typing import Optional
 
 # dependency imports
 from celery import Celery
@@ -23,7 +21,7 @@ from celery import Celery
 def initialize(
     celery: Celery,
     interface: str = "json",
-    interface_args: Optional[Dict[str, Any]] = None,
+    **interface_args: Any,
 ) -> None:
     """
     Initialize the serializer with models.
@@ -40,8 +38,5 @@ def initialize(
         raise errors.UnsupportedInterfaceError(
             f"Unsupported serialization interface '{interface}'"
         )
-
-    if not interface_args:
-        interface_args = {}
 
     interface_module.initialize(celery, **interface_args)

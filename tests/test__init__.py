@@ -55,8 +55,7 @@ def test_initialize__specify_interface_args(import_module: Mock) -> None:
     celery = Mock()
     interface_module = Mock()
     import_module.return_value = interface_module
-    interface_args = {"arg": "value"}
 
-    initialize(celery, interface_args=interface_args)
+    initialize(celery, arg="value")
 
     interface_module.initialize.assert_called_with(celery, arg="value")
