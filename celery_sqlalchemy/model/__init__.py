@@ -27,9 +27,9 @@ try:
 except Exception:
     DeclarativeBase = Any
 
-from sqlalchemy.orm import Mapper  # noqa: E402
+from sqlalchemy.orm import Mapper
 
-from sqlalchemy import inspect  # noqa: E402
+from sqlalchemy import inspect
 
 schema_maps: Dict[str, Schema] = {}
 type_maps = {
