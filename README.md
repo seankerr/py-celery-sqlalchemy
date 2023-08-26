@@ -1,6 +1,6 @@
 # celery-sqlalchemy
 
-SQLAlchemy 2.x model serialization for celery.
+SQLAlchemy model serialization for celery.
 
 ### Install
 
@@ -98,5 +98,7 @@ task.apply_async((author, title), serializer="your content type")
 
 ### Changelog
 
+- **0.1.1**
+  - Add support for SQLAlchemy 1.4.
 - **0.1.0**
   - Initial version with support for common Python types.
