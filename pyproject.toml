@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "celery-sqlalchemy"
-version = "0.1.0"
+version = "0.1.1"
 description = "SQLAlchemy model serialization for celery."
 license = "BSD-3-Clause"
 authors = ["Sean Kerr <sean@code-box.org>"]
@@ -13,7 +13,7 @@ packages = [{include = "celery_sqlalchemy"}]
 python = "^3.9"
 
 orjson = ">=3.9.4"
-sqlalchemy = ">=2.0.20"
+sqlalchemy = ">=1.4"
 
 [virtualenvs]
 in-project = true
