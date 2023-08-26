@@ -8,7 +8,7 @@ from ..schema import TypeMap
 # dependency imports
 from sqlalchemy.sql import sqltypes
 
-sqlalchemy_type_maps = {
+type_maps = {
     sqltypes.ARRAY: TypeMap(
         from_json="array_from_json", params="array_params", to_json="array_to_json"
     ),
@@ -29,9 +29,6 @@ sqlalchemy_type_maps = {
         from_json="datetime_from_json",
         params="datetime_params",
         to_json="datetime_to_json",
-    ),
-    sqltypes.Double: TypeMap(
-        from_json="double_from_json", params="double_params", to_json="double_to_json"
     ),
     sqltypes.Enum: TypeMap(
         from_json="enum_from_json", params="enum_params", to_json="enum_to_json"
@@ -85,8 +82,5 @@ sqlalchemy_type_maps = {
         from_json="unicodetext_from_json",
         params="unicodetext_params",
         to_json="unicodetext_to_json",
-    ),
-    sqltypes.UUID: TypeMap(
-        from_json="uuid_from_json", params="uuid_params", to_json="uuid_to_json"
     ),
 }

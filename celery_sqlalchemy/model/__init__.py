@@ -3,8 +3,10 @@
 # --------------------------------------------------------------------------------------
 
 # celery-sqlalchemy imports
-from .postgresql import postgresql_type_maps
-from .sqlalchemy import sqlalchemy_type_maps
+from . import postgresql_1_4
+from . import postgresql_2_0
+from . import sqlalchemy_1_4
+from . import sqlalchemy_2_0
 
 from ..schema import Field
 from ..schema import Schema
@@ -14,19 +16,27 @@ from importlib import import_module
 
 from types import ModuleType
 
+from typing import Any
 from typing import Dict
 from typing import cast
 
 # dependency imports
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.orm import Mapper
+try:
+    from sqlalchemy.orm import DeclarativeBase
 
-from sqlalchemy import inspect
+except Exception:
+    DeclarativeBase = Any
+
+from sqlalchemy.orm import Mapper  # noqa: E402
+
+from sqlalchemy import inspect  # noqa: E402
 
 schema_maps: Dict[str, Schema] = {}
 type_maps = {
-    **sqlalchemy_type_maps,
-    **postgresql_type_maps,
+    **sqlalchemy_1_4.type_maps,
+    **sqlalchemy_2_0.type_maps,
+    **postgresql_1_4.type_maps,
+    **postgresql_2_0.type_maps,
 }
 
 

@@ -3,7 +3,7 @@
 # --------------------------------------------------------------------------------------
 
 # celery-sqlalchemy types
-from celery_sqlalchemy.model.sqlalchemy import sqlalchemy_type_maps
+from celery_sqlalchemy.model import sqlalchemy_1_4
 
 from celery_sqlalchemy.schema import TypeMap
 
@@ -35,7 +35,6 @@ from sqlalchemy.sql import sqltypes
             "datetime_params",
             "datetime_to_json",
         ],
-        [sqltypes.Double, "double_from_json", "double_params", "double_to_json"],
         [sqltypes.Enum, "enum_from_json", "enum_params", "enum_to_json"],
         [sqltypes.Float, "float_from_json", "float_params", "float_to_json"],
         [sqltypes.Integer, "integer_from_json", "integer_params", "integer_to_json"],
@@ -69,10 +68,9 @@ from sqlalchemy.sql import sqltypes
             "unicodetext_params",
             "unicodetext_to_json",
         ],
-        [sqltypes.UUID, "uuid_from_json", "uuid_params", "uuid_to_json"],
     ],
 )
 def test_type_maps(type: List[Any]) -> None:
-    assert sqlalchemy_type_maps[type[0]] == TypeMap(
+    assert sqlalchemy_1_4.type_maps[type[0]] == TypeMap(
         from_json=type[1], params=type[2], to_json=type[3]
     )
