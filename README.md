@@ -1,6 +1,6 @@
 # celery-sqlalchemy
 
-SQLAlchemy model serialization for celery.
+SQLAlchemy model serialization for celery. Supports SQLAlchemy 1.4 & 2.0.
 
 ### Install
 
