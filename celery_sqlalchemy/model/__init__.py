@@ -25,7 +25,7 @@ try:
     from sqlalchemy.orm import DeclarativeBase
 
 except Exception:
-    DeclarativeBase = Any
+    DeclarativeBase = Any  # type: ignore
 
 from sqlalchemy.orm import Mapper
 
