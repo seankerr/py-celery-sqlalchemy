@@ -98,6 +98,8 @@ task.apply_async((author, title), serializer="your content type")
 
 ### Changelog
 
+- **0.1.2**
+  - Add py.typed for mypy
 - **0.1.1**
   - Add support for SQLAlchemy 1.4.
 - **0.1.0**
