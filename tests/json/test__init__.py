@@ -22,7 +22,7 @@ import orjson
 PATH = "celery_sqlalchemy.json"
 
 
-def test_arg_from_json__iterable() -> None:
+def test_arg_from_json__list() -> None:
     arg = [Mock()]
 
     result = json.arg_from_json(arg)
