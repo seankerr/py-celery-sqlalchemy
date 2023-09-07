@@ -37,9 +37,15 @@ def test_arg_from_json__list() -> None:
 def test_arg_from_json__model_class(
     schema_for_model_path: Mock, sys: Mock, __name__: Mock
 ) -> None:
+    def ModelInit(self: Any, name: str) -> Any:
+        self.name = name
+
+    Model = type("Model", (object,), dict(name=None))
+    Model.__init__ = ModelInit  # type: ignore
+
     field = Mock()
     field.name = "name"
-    schema = Mock(fields=[field], model=Mock(__table__=Mock()))
+    schema = Mock(fields=[field], model=Model)
     schema_for_model_path.return_value = schema
     model_path = Mock()
     name = Mock()
@@ -48,11 +54,12 @@ def test_arg_from_json__model_class(
         "name": name,
     }
 
-    assert json.arg_from_json(arg) == schema.model.return_value
+    result = json.arg_from_json(arg)
 
     schema_for_model_path.assert_called_with(model_path, sys.modules[__name__])
     field.from_json.assert_called_with(field, name)
-    schema.model.assert_called_with(name=field.from_json())
+
+    assert result.name == field.from_json()
 
 
 @patch(f"{PATH}.__name__")
@@ -67,7 +74,8 @@ def test_arg_from_json__model_instance(
 
     field = Mock()
     field.name = "name"
-    schema = Mock(fields=[field], model=Model(name="fake"))
+    model = Model(name="test")
+    schema = Mock(fields=[field], model=model)
     schema_for_model_path.return_value = schema
     model_path = Mock()
     name = Mock()
@@ -76,10 +84,14 @@ def test_arg_from_json__model_instance(
         "name": name,
     }
 
-    assert isinstance(json.arg_from_json(arg), Model)
+    result = json.arg_from_json(arg)
 
     schema_for_model_path.assert_called_with(model_path, sys.modules[__name__])
     field.from_json.assert_called_with(field, name)
+
+    assert isinstance(result, Model)
+    assert id(result) != id(model)
+    assert result.name == field.from_json()
 
 
 def test_arg_from_json__other_than_model() -> None:
