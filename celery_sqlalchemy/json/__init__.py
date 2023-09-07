@@ -43,8 +43,14 @@ def arg_from_json(arg: Any) -> Any:
     """
     if isinstance(arg, dict) and json_module_key in arg:
         schema = schema_for_model_path(arg[json_module_key], sys.modules[__name__])
+        model = (
+            schema.model
+            if hasattr(schema.model, "__table__")
+            else schema.model.__class__
+        )
 
-        return schema.model(
+        print(model)
+        return model(
             **{
                 field.name: field.from_json(field, arg.get(field.name))
                 for field in schema.fields

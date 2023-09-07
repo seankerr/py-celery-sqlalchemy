@@ -34,12 +34,12 @@ def test_arg_from_json__list() -> None:
 @patch(f"{PATH}.__name__")
 @patch(f"{PATH}.sys")
 @patch(f"{PATH}.schema_for_model_path")
-def test_arg_from_json__model(
+def test_arg_from_json__model_class(
     schema_for_model_path: Mock, sys: Mock, __name__: Mock
 ) -> None:
     field = Mock()
     field.name = "name"
-    schema = Mock(fields=[field])
+    schema = Mock(fields=[field], model=Mock(__table__=Mock()))
     schema_for_model_path.return_value = schema
     model_path = Mock()
     name = Mock()
@@ -53,6 +53,33 @@ def test_arg_from_json__model(
     schema_for_model_path.assert_called_with(model_path, sys.modules[__name__])
     field.from_json.assert_called_with(field, name)
     schema.model.assert_called_with(name=field.from_json())
+
+
+@patch(f"{PATH}.__name__")
+@patch(f"{PATH}.sys")
+@patch(f"{PATH}.schema_for_model_path")
+def test_arg_from_json__model_instance(
+    schema_for_model_path: Mock, sys: Mock, __name__: Mock
+) -> None:
+    class Model:
+        def __init__(self, name: str):
+            self.name = name
+
+    field = Mock()
+    field.name = "name"
+    schema = Mock(fields=[field], model=Model(name="fake"))
+    schema_for_model_path.return_value = schema
+    model_path = Mock()
+    name = Mock()
+    arg = {
+        "$model_path$": model_path,
+        "name": name,
+    }
+
+    assert isinstance(json.arg_from_json(arg), Model)
+
+    schema_for_model_path.assert_called_with(model_path, sys.modules[__name__])
+    field.from_json.assert_called_with(field, name)
 
 
 def test_arg_from_json__other_than_model() -> None:
