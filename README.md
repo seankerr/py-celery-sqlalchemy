@@ -98,6 +98,8 @@ task.apply_async((author, title), serializer="your content type")
 
 ### Changelog
 
+- **0.1.4**
+  - Bug fix: schema model may already be converted to model instance when chaining
 - **0.1.3**
   - Check list type when converting json back to argument
 - **0.1.2**
