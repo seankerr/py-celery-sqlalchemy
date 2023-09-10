@@ -22,6 +22,15 @@ import orjson
 PATH = "celery_sqlalchemy.json"
 
 
+@patch(f"{PATH}.deserialize_arg")
+def test_arg_from_json__deserialize_arg(deserialize_arg: Mock) -> None:
+    arg = Mock()
+
+    assert json.arg_from_json(arg) == deserialize_arg.return_value
+
+    deserialize_arg.assert_called_with(arg)
+
+
 def test_arg_from_json__list() -> None:
     arg = [Mock()]
 
@@ -131,6 +140,15 @@ def test_arg_to_json__model(
     schema_map_key.assert_called_with(arg)
 
 
+@patch(f"{PATH}.serialize_arg")
+def test_arg_to_json__serialize_arg(serialize_arg: Mock) -> None:
+    arg = type("FakeType")
+
+    assert json.arg_to_json(arg) == serialize_arg.return_value
+
+    serialize_arg.assert_called_with(arg)
+
+
 def test_arg_to_json__set() -> None:
     assert json.arg_to_json({"test"}) == ["test"]
 
@@ -145,6 +163,20 @@ def test_arg_to_json__unserializable_with_table__raises_serialization_error() ->
         assert json.arg_to_json(arg)
 
     assert str(ex.value) == f"Cannot serialize type '{arg.__class__.__name__}'"
+
+
+@patch(f"{PATH}.serialize_arg")
+def test_arg_to_json__unserializable_with_table__serialize_arg(
+    serialize_arg: Mock,
+) -> None:
+    class Model:
+        __table__ = "invalid"
+
+    arg = Model()
+
+    assert json.arg_to_json(arg) == serialize_arg.return_value
+
+    serialize_arg.assert_called_with(arg)
 
 
 def test_arg_to_json__unserializable_without_table__raises_serialization_error() -> (
@@ -179,12 +211,16 @@ def test_initialize(
     assert celery.conf.result_accept_content == ["json+sqlalchemy"]
     assert celery.conf.task_serializer == "json+sqlalchemy"
 
+    from celery_sqlalchemy.json import deserialize_arg
     from celery_sqlalchemy.json import json_module_key
     from celery_sqlalchemy.json import orjson_opts
+    from celery_sqlalchemy.json import serialize_arg
 
+    assert not deserialize_arg
     assert json_module_key == "$model_path$"
     assert orjson_opts & orjson.OPT_NAIVE_UTC == orjson.OPT_NAIVE_UTC
     assert orjson_opts & orjson.OPT_UTC_Z == 0
+    assert not serialize_arg
 
 
 @patch(f"{PATH}.serialization")
@@ -267,6 +303,69 @@ def test_initialize__set_naive_utc_true(
     json.initialize(celery, naive_utc=True)
 
     assert json.orjson_opts & orjson.OPT_NAIVE_UTC == orjson.OPT_NAIVE_UTC
+
+
+@patch(f"{PATH}.serialization")
+@patch(f"{PATH}.message_from_args")
+@patch(f"{PATH}.message_to_args")
+def test_initialize__set_passthrough_dataclass_false(
+    message_to_args: Mock, message_from_args: Mock, serialization: Mock
+) -> None:
+    celery = Mock()
+
+    json.orjson_opts = 0
+
+    json.initialize(celery, passthrough_dataclass=False)
+
+    assert json.orjson_opts & orjson.OPT_PASSTHROUGH_DATACLASS == 0
+
+
+@patch(f"{PATH}.serialization")
+@patch(f"{PATH}.message_from_args")
+@patch(f"{PATH}.message_to_args")
+def test_initialize__set_passthrough_dataclass_true(
+    message_to_args: Mock, message_from_args: Mock, serialization: Mock
+) -> None:
+    celery = Mock()
+
+    json.orjson_opts = 0
+
+    json.initialize(celery, passthrough_dataclass=True)
+
+    assert (
+        json.orjson_opts & orjson.OPT_PASSTHROUGH_DATACLASS
+        == orjson.OPT_PASSTHROUGH_DATACLASS
+    )
+
+
+@patch(f"{PATH}.serialization")
+@patch(f"{PATH}.message_from_args")
+@patch(f"{PATH}.message_to_args")
+def test_initialize__set_on_deserialize_arg(
+    message_to_args: Mock, message_from_args: Mock, serialization: Mock
+) -> None:
+    celery = Mock()
+
+    json.initialize(celery, on_deserialize_arg=lambda x: x)
+
+    from celery_sqlalchemy.json import deserialize_arg
+
+    assert deserialize_arg
+
+
+@patch(f"{PATH}.serialization")
+@patch(f"{PATH}.message_from_args")
+@patch(f"{PATH}.message_to_args")
+def test_initialize__set_on_serialize_arg(
+    message_to_args: Mock, message_from_args: Mock, serialization: Mock
+) -> None:
+    celery = Mock()
+
+    json.initialize(celery, on_serialize_arg=lambda x: x)
+
+    from celery_sqlalchemy.json import serialize_arg
+
+    assert serialize_arg
 
 
 @patch(f"{PATH}.serialization")

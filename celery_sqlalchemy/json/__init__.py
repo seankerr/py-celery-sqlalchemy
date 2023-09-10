@@ -13,8 +13,10 @@ from .. import errors
 from collections import namedtuple
 
 from typing import Any
+from typing import Callable
 from typing import Dict
 from typing import List
+from typing import Optional
 from typing import Union
 
 import sys
@@ -30,8 +32,10 @@ from sqlalchemy import inspect
 
 import orjson
 
+deserialize_arg = None
 json_module_key = "$model_path$"
 orjson_opts = 0
+serialize_arg = None
 
 
 def arg_from_json(arg: Any) -> Any:
@@ -56,6 +60,9 @@ def arg_from_json(arg: Any) -> Any:
 
     elif isinstance(arg, list):
         return [arg_from_json(item) for item in arg]
+
+    elif deserialize_arg:
+        return deserialize_arg(arg)
 
     else:
         return arg
@@ -92,6 +99,9 @@ def arg_to_json(arg: Any) -> Any:
     elif isinstance(arg, set):
         return list(arg)
 
+    if serialize_arg:
+        return serialize_arg(arg)
+
     raise errors.SerializationError(f"Cannot serialize type '{arg.__class__.__name__}'")
 
 
@@ -101,7 +111,10 @@ def initialize(
     content_type: str = "json+sqlalchemy",
     apply_serializer: bool = True,
     naive_utc: bool = True,
+    passthrough_dataclass: bool = False,
     utc_z: bool = False,
+    on_deserialize_arg: Optional[Callable] = None,
+    on_serialize_arg: Optional[Callable] = None,
 ) -> None:
     """
     Initialize the JSON module.
@@ -112,15 +125,25 @@ def initialize(
         content_type (str): The content type to use for this serializer.
         apply_serializer (bool): Apply the task serializer settings globally.
         naive_utc (bool): Enable orjson OPT_NAIVE_UTC.
+        passthrough_dataclass (bool): Enable orjson OPT_PASSTHROUGH_DATACLASS.
         utc_z (bool): Enable orjson OPT_UTC_Z.
+        on_deserialize_arg (Callback): Deserialization callback.
+        on_serialize_arg (Callback): Serialization callback.
     """
+    global deserialize_arg
     global json_module_key
     global orjson_opts
+    global serialize_arg
 
+    deserialize_arg = on_deserialize_arg
     json_module_key = json_key
+    serialize_arg = on_serialize_arg
 
     if naive_utc:
         orjson_opts |= orjson.OPT_NAIVE_UTC
+
+    if passthrough_dataclass:
+        orjson_opts |= orjson.OPT_PASSTHROUGH_DATACLASS
 
     if utc_z:
         orjson_opts |= orjson.OPT_UTC_Z
