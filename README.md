@@ -98,6 +98,8 @@ task.apply_async((author, title), serializer="your content type")
 
 ### Changelog
 
+- **0.1.5**
+  - Bump sqlalchemy dependency
 - **0.1.4**
   - Bug fix: schema model may already be converted to model instance when chaining
 - **0.1.3**
