@@ -22,31 +22,31 @@ import orjson
 PATH = "celery_sqlalchemy.json"
 
 
-def test__init___set_json_key() -> None:
+def test___init___set_json_key() -> None:
     serializer = JsonSerializer(json_key="test")
 
     assert serializer.json_key == "test"
 
 
-def test__init___set_naive_utc_false() -> None:
+def test___init___set_naive_utc_false() -> None:
     serializer = JsonSerializer(naive_utc=False)
 
     assert serializer.orjson_opts & orjson.OPT_NAIVE_UTC == 0
 
 
-def test__init___set_naive_utc_true() -> None:
+def test___init___set_naive_utc_true() -> None:
     serializer = JsonSerializer(naive_utc=True)
 
     assert serializer.orjson_opts & orjson.OPT_NAIVE_UTC == orjson.OPT_NAIVE_UTC
 
 
-def test__init___set_passthrough_dataclass_false() -> None:
+def test___init___set_passthrough_dataclass_false() -> None:
     serializer = JsonSerializer(passthrough_dataclass=False)
 
     assert serializer.orjson_opts & orjson.OPT_PASSTHROUGH_DATACLASS == 0
 
 
-def test__init___set_passthrough_dataclass_true() -> None:
+def test___init___set_passthrough_dataclass_true() -> None:
     serializer = JsonSerializer(passthrough_dataclass=True)
 
     assert (
@@ -55,27 +55,27 @@ def test__init___set_passthrough_dataclass_true() -> None:
     )
 
 
-def test__init___set_on_deserialize_arg() -> None:
+def test___init___set_on_deserialize_arg() -> None:
     deserialize_arg = Mock()
     serializer = JsonSerializer(on_deserialize_arg=deserialize_arg)
 
     assert serializer.deserialize_arg == deserialize_arg
 
 
-def test__init___set_on_serialize_arg() -> None:
+def test___init___set_on_serialize_arg() -> None:
     serialize_arg = Mock()
     serializer = JsonSerializer(on_serialize_arg=serialize_arg)
 
     assert serializer.serialize_arg == serialize_arg
 
 
-def test__init___set_utc_z_false() -> None:
+def test___init___set_utc_z_false() -> None:
     serializer = JsonSerializer(utc_z=False)
 
     assert serializer.orjson_opts & orjson.OPT_UTC_Z == 0
 
 
-def test__init___set_utc_z_true() -> None:
+def test___init___set_utc_z_true() -> None:
     serializer = JsonSerializer(utc_z=True)
 
     assert serializer.orjson_opts & orjson.OPT_UTC_Z == orjson.OPT_UTC_Z

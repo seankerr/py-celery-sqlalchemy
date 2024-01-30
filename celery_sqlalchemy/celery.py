@@ -14,6 +14,7 @@ from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import Tuple
 from typing import Union
 
 # dependency imports
@@ -43,8 +44,8 @@ def initialize(
 
     serialization.register(
         content_type,
-        message_from_args,
-        message_to_args,
+        serialize,
+        deserialize,
         "json",
     )
 
@@ -55,28 +56,7 @@ def initialize(
     __SERIALIZER__ = serializer
 
 
-def message_from_args(args: Union[Dict[str, Any], List[Any]]) -> Message:
-    """
-    Serialize arguments into their Celery message equivalent.
-
-    Parameters:
-        args (dict | list | Any): Task arguments.
-    """
-    if not __SERIALIZER__:
-        raise errors.SerializationError("Serializer has not been initialized")
-
-    if isinstance(args, tuple):
-        # task
-        return __SERIALIZER__.message_from_args(
-            Args(arg=args[2], args=args[0], kwargs=args[1])
-        )
-
-    else:
-        # celery message
-        return orjson.dumps(args)
-
-
-def message_to_args(message: Message) -> Union[List[Any], str]:
+def deserialize(message: Message) -> Union[List[Any], str]:
     """
     Deserialize a Celery message into its python equivalent.
 
@@ -94,3 +74,26 @@ def message_to_args(message: Message) -> Union[List[Any], str]:
     except (KeyError, TypeError):
         # celery message
         return orjson.loads(message)
+
+
+def serialize(
+    args: Union[Dict[str, Any], Tuple[List[Any], Dict[str, Any], Any]]
+) -> Message:
+    """
+    Serialize arguments into their Celery message equivalent.
+
+    Parameters:
+        args (dict | tuple): Task arguments.
+    """
+    if not __SERIALIZER__:
+        raise errors.SerializationError("Serializer has not been initialized")
+
+    if isinstance(args, tuple):
+        # task
+        return __SERIALIZER__.message_from_args(
+            Args(arg=args[2], args=args[0], kwargs=args[1])
+        )
+
+    else:
+        # celery message
+        return orjson.dumps(args)
