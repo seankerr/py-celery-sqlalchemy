@@ -24,13 +24,14 @@ By default `celery-sqlalchemy` will configure Celery to use the `json+sqlalchemy
 content type for all tasks and no further configuration is needed.
 
 ```python
-from celery_sqlalchemy import initialize
+from celery_sqlalchemy.celery import initialize as initialize_celery
+from celery_sqlalchemy.json import JsonSerializer
 
 # setup celery
 celery = ...
 
 # initialize celery-sqlalchemy
-initialize(celery)
+initialize_celery(celery, JsonSerializer())
 
 # dispatch a task
 author = "Alan Watts"
@@ -45,13 +46,14 @@ The first way of doing this is by specifying the `json+sqlalchemy` content type 
 the default task serializer.
 
 ```python
-from celery_sqlalchemy import initialize
+from celery_sqlalchemy.celery import initialize as initialize_celery
+from celery_sqlalchemy.json import JsonSerializer
 
 # setup celery
 celery = ...
 
 # initialize celery-sqlalchemy without the `apply_serializer` setting
-initialize(celery, apply_serializer=False)
+initialize_celery(celery, JsonSerializer(), apply_serializer=False)
 
 # combine the json+sqlalchemy content type with your other content types
 celery.conf.accept_content = ["json+sqlalchemy", "your content type"]
@@ -74,13 +76,14 @@ The other way of doing this is by not specifying the default task serializer, an
 instead using `apply_async()` to dispatch all tasks.
 
 ```python
-from celery_sqlalchemy import initialize
+from celery_sqlalchemy.celery import initialize as initialize_celery
+from celery_sqlalchemy.json import JsonSerializer
 
 # setup celery
 celery = ...
 
 # initialize celery-sqlalchemy without the `apply_serializer` setting
-initialize(celery, apply_serializer=False)
+initialize_celery(celery, JsonSerializer(), apply_serializer=False)
 
 # combine the json+sqlalchemy content type with your other content types
 celery.conf.accept_content = ["json+sqlalchemy", "your content type"]
@@ -98,6 +101,9 @@ task.apply_async((author, title), serializer="your content type")
 
 ### Changelog
 
+- **0.1.6**
+  - Extract celery support into its own module
+  - Remove `celery_sqlalchemy.initialize()`
 - **0.1.5**
   - Bump sqlalchemy dependency
 - **0.1.4**
