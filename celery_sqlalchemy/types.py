@@ -10,10 +10,11 @@ from typing import Dict
 from typing import List
 from typing import Optional
 from typing import TypeAlias
+from typing import Union
 
 from typing_extensions import Protocol
 
-Message: TypeAlias = bytes
+Message: TypeAlias = Union[bytes, str]
 
 
 @dataclass(frozen=True)

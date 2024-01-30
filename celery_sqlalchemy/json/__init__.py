@@ -146,9 +146,9 @@ class JsonSerializer(Serializer):
         """
         return orjson.dumps(
             {
-                "arg": args.arg,
-                "args": args.args,
-                "kwargs": args.kwargs,
+                "$arg$": args.arg,
+                "$args$": args.args,
+                "$kwargs$": args.kwargs,
             },
             default=self.arg_to_json,
             option=self.orjson_opts,
@@ -163,9 +163,9 @@ class JsonSerializer(Serializer):
         """
         json = orjson.loads(message)
         args = Args(
-            arg=self.arg_from_json(json["arg"]),
-            args=json["args"],
-            kwargs=json["kwargs"],
+            arg=self.arg_from_json(json["$arg$"]),
+            args=json["$args$"],
+            kwargs=json["$kwargs$"],
         )
 
         if args.args:

@@ -268,9 +268,9 @@ def test_message_from_args(orjson: Mock) -> None:
 
     orjson.dumps.assert_called_with(
         {
-            "arg": args.arg,
-            "args": args.args,
-            "kwargs": args.kwargs,
+            "$arg$": args.arg,
+            "$args$": args.args,
+            "$kwargs$": args.kwargs,
         },
         default=serializer.arg_to_json,
         option=serializer.orjson_opts,
@@ -281,13 +281,12 @@ def test_message_from_args(orjson: Mock) -> None:
 @patch(f"{PATH}.orjson")
 def test_message_to_args(orjson: Mock, arg_from_json: Mock) -> None:
     message = Mock()
-    arg = Mock()
     arg_value = Mock()
     kwarg_value = Mock()
     json = {
-        "arg": arg,
-        "args": [arg_value],
-        "kwargs": {"name": kwarg_value},
+        "$arg$": arg_value,
+        "$args$": [arg_value],
+        "$kwargs$": {"name": kwarg_value},
     }
     orjson.loads.return_value = json
     serializer = JsonSerializer()
@@ -297,7 +296,7 @@ def test_message_to_args(orjson: Mock, arg_from_json: Mock) -> None:
     orjson.loads.assert_called_with(message)
 
     assert arg_from_json.call_args_list == [
-        call(arg),
+        call(arg_value),
         call(arg_value),
         call(kwarg_value),
     ]

@@ -11,6 +11,7 @@ from . import errors
 
 # system imports
 from typing import Any
+from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Union
@@ -19,6 +20,8 @@ from typing import Union
 from celery import Celery
 
 from kombu import serialization
+
+import orjson
 
 __SERIALIZER__: Optional[Serializer] = None
 
@@ -52,7 +55,7 @@ def initialize(
     __SERIALIZER__ = serializer
 
 
-def message_from_args(args: Union[List[Any], str]) -> Union[Message, str]:
+def message_from_args(args: Union[Dict[str, Any], List[Any]]) -> Message:
     """
     Serialize arguments into their Celery message equivalent.
 
@@ -62,13 +65,15 @@ def message_from_args(args: Union[List[Any], str]) -> Union[Message, str]:
     if not __SERIALIZER__:
         raise errors.SerializationError("Serializer has not been initialized")
 
-    if isinstance(args, list):
+    if isinstance(args, tuple):
+        # task
         return __SERIALIZER__.message_from_args(
-            Args(arg=None, args=args[0], kwargs=args[1])
+            Args(arg=args[2], args=args[0], kwargs=args[1])
         )
 
     else:
-        return __SERIALIZER__.message_from_args(Args(arg=args, args=[], kwargs={}))
+        # celery message
+        return orjson.dumps(args)
 
 
 def message_to_args(message: Message) -> Union[List[Any], str]:
@@ -81,10 +86,11 @@ def message_to_args(message: Message) -> Union[List[Any], str]:
     if not __SERIALIZER__:
         raise errors.SerializationError("Serializer has not been initialized")
 
-    args = __SERIALIZER__.message_to_args(message)
+    try:
+        args = __SERIALIZER__.message_to_args(message)
 
-    if args.arg:
-        return args.arg
+        return [args.args, args.kwargs, args.arg]
 
-    else:
-        return [args.args, args.kwargs]
+    except (KeyError, TypeError):
+        # celery message
+        return orjson.loads(message)
