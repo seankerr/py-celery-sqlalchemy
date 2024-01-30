@@ -7,6 +7,10 @@ from ..model import schema_for_model
 from ..model import schema_for_model_path
 from ..model import schema_map_key
 
+from ..types import Args
+from ..types import Message
+from ..types import Serializer
+
 from .. import errors
 
 # system imports
@@ -14,189 +18,165 @@ from collections import namedtuple
 
 from typing import Any
 from typing import Callable
-from typing import Dict
-from typing import List
 from typing import Optional
-from typing import Union
 
 import sys
 
 # dependency imports
-from celery import Celery
-
-from kombu import serialization
-
 from sqlalchemy.exc import NoInspectionAvailable
 
 from sqlalchemy import inspect
 
 import orjson
 
-deserialize_arg = None
-json_module_key = "$model_path$"
-orjson_opts = 0
-serialize_arg = None
 
+class JsonSerializer(Serializer):
+    def __init__(
+        self,
+        json_key: str = "$model_path$",
+        naive_utc: bool = True,
+        passthrough_dataclass: bool = False,
+        utc_z: bool = False,
+        on_deserialize_arg: Optional[Callable] = None,
+        on_serialize_arg: Optional[Callable] = None,
+    ) -> None:
+        """
+        Initialize the JSON module.
 
-def arg_from_json(arg: Any) -> Any:
-    """
-    Deserialize a single task argument into its python equivalent.
+        Parameters:
+            celery (Celery): Celery instance.
+            json_key (str): The key used to store the model path during serialization.
+            content_type (str): The content type to use for this serializer.
+            apply_serializer (bool): Apply the task serializer settings globally.
+            naive_utc (bool): Enable orjson OPT_NAIVE_UTC.
+            passthrough_dataclass (bool): Enable orjson OPT_PASSTHROUGH_DATACLASS.
+            utc_z (bool): Enable orjson OPT_UTC_Z.
+            on_deserialize_arg (Callback): Deserialization callback.
+            on_serialize_arg (Callback): Serialization callback.
+        """
+        self.deserialize_arg = on_deserialize_arg
+        self.json_key = json_key
+        self.orjson_opts = 0
+        self.serialize_arg = on_serialize_arg
 
-    Parameters:
-        arg (object): Any object type.
-    """
-    if isinstance(arg, dict) and json_module_key in arg:
-        schema = schema_for_model_path(arg[json_module_key], sys.modules[__name__])
-        model = (
-            schema.model if isinstance(schema.model, type) else schema.model.__class__
+        if naive_utc:
+            self.orjson_opts |= orjson.OPT_NAIVE_UTC
+
+        if passthrough_dataclass:
+            self.orjson_opts |= orjson.OPT_PASSTHROUGH_DATACLASS
+
+        if utc_z:
+            self.orjson_opts |= orjson.OPT_UTC_Z
+
+    def arg_from_json(self, arg: Any) -> Any:
+        """
+        Deserialize a JSON argument into its python equivalent.
+
+        Parameters:
+            arg (object): Any object type.
+        """
+        if isinstance(arg, dict) and self.json_key in arg:
+            schema = schema_for_model_path(arg[self.json_key], sys.modules[__name__])
+            model = (
+                schema.model
+                if isinstance(schema.model, type)
+                else schema.model.__class__
+            )
+
+            return model(
+                **{
+                    field.name: field.from_json(field, arg.get(field.name))
+                    for field in schema.fields
+                }
+            )
+
+        elif isinstance(arg, list):
+            return [self.arg_from_json(item) for item in arg]
+
+        elif self.deserialize_arg:
+            return self.deserialize_arg(arg)
+
+        else:
+            return arg
+
+    def arg_to_json(self, arg: Any) -> Any:
+        """
+        Serialize a python argument into its JSON equivalent.
+
+        Parameters:
+            arg (object): Any object type.
+
+        Raises:
+            errors.SerializationError: If the argument cannot be serialized.
+        """
+        if hasattr(arg, "__table__"):
+            try:
+                instance_state = inspect(arg)
+                mapper = instance_state.mapper
+                schema = schema_for_model(arg, mapper, sys.modules[__name__])
+
+                json = {
+                    field.name: field.to_json(field, getattr(arg, field.name))
+                    for field in schema.fields
+                }
+
+                json[self.json_key] = schema_map_key(arg)
+
+                return json
+
+            except NoInspectionAvailable:
+                pass
+
+        elif isinstance(arg, set):
+            return list(arg)
+
+        if self.serialize_arg:
+            return self.serialize_arg(arg)
+
+        raise errors.SerializationError(
+            f"Cannot serialize type '{arg.__class__.__name__}'"
         )
 
-        return model(
-            **{
-                field.name: field.from_json(field, arg.get(field.name))
-                for field in schema.fields
-            }
+    def message_from_args(self, args: Args) -> Message:
+        """
+        Serialize python arguments into their message equivalent.
+
+        Parameters:
+            args (dict): Arguments.
+        """
+        return orjson.dumps(
+            {
+                "arg": args.arg,
+                "args": args.args,
+                "kwargs": args.kwargs,
+            },
+            default=self.arg_to_json,
+            option=self.orjson_opts,
         )
 
-    elif isinstance(arg, list):
-        return [arg_from_json(item) for item in arg]
+    def message_to_args(self, message: Message) -> Args:
+        """
+        Deserialize a message into its python equivalent.
 
-    elif deserialize_arg:
-        return deserialize_arg(arg)
+        Parameters:
+            message (Message): Message.
+        """
+        json = orjson.loads(message)
+        args = Args(
+            arg=self.arg_from_json(json["arg"]),
+            args=json["args"],
+            kwargs=json["kwargs"],
+        )
 
-    else:
-        return arg
+        if args.args:
+            for arg_n, arg_v in enumerate(args.args):
+                args.args[arg_n] = self.arg_from_json(arg_v)
 
+        if args.kwargs:
+            for arg_k, arg_v in args.kwargs.items():
+                args.kwargs[arg_k] = self.arg_from_json(arg_v)
 
-def arg_to_json(arg: Any) -> Any:
-    """
-    Serialize a single task argument into its JSON equivalent.
-
-    Parameters:
-        arg (object): Any object type.
-
-    Raises:
-        errors.SerializationError: If a type cannot be serialized.
-    """
-    if hasattr(arg, "__table__"):
-        try:
-            instance_state = inspect(arg)
-            mapper = instance_state.mapper
-            schema = schema_for_model(arg, mapper, sys.modules[__name__])
-
-            json = {
-                field.name: field.to_json(field, getattr(arg, field.name))
-                for field in schema.fields
-            }
-
-            json[json_module_key] = schema_map_key(arg)
-
-            return json
-
-        except NoInspectionAvailable:
-            pass
-
-    elif isinstance(arg, set):
-        return list(arg)
-
-    if serialize_arg:
-        return serialize_arg(arg)
-
-    raise errors.SerializationError(f"Cannot serialize type '{arg.__class__.__name__}'")
-
-
-def initialize(
-    celery: Celery,
-    json_key: str = "$model_path$",
-    content_type: str = "json+sqlalchemy",
-    apply_serializer: bool = True,
-    naive_utc: bool = True,
-    passthrough_dataclass: bool = False,
-    utc_z: bool = False,
-    on_deserialize_arg: Optional[Callable] = None,
-    on_serialize_arg: Optional[Callable] = None,
-) -> None:
-    """
-    Initialize the JSON module.
-
-    Parameters:
-        celery (Celery): Celery instance.
-        json_key (str): The key used to store the model path during serialization.
-        content_type (str): The content type to use for this serializer.
-        apply_serializer (bool): Apply the task serializer settings globally.
-        naive_utc (bool): Enable orjson OPT_NAIVE_UTC.
-        passthrough_dataclass (bool): Enable orjson OPT_PASSTHROUGH_DATACLASS.
-        utc_z (bool): Enable orjson OPT_UTC_Z.
-        on_deserialize_arg (Callback): Deserialization callback.
-        on_serialize_arg (Callback): Serialization callback.
-    """
-    global deserialize_arg
-    global json_module_key
-    global orjson_opts
-    global serialize_arg
-
-    deserialize_arg = on_deserialize_arg
-    json_module_key = json_key
-    serialize_arg = on_serialize_arg
-
-    if naive_utc:
-        orjson_opts |= orjson.OPT_NAIVE_UTC
-
-    if passthrough_dataclass:
-        orjson_opts |= orjson.OPT_PASSTHROUGH_DATACLASS
-
-    if utc_z:
-        orjson_opts |= orjson.OPT_UTC_Z
-
-    serialization.register(
-        content_type,
-        message_from_args,
-        message_to_args,
-        "json",
-    )
-
-    if apply_serializer:
-        celery.conf.accept_content = [content_type]
-        celery.conf.result_accept_content = [content_type]
-        celery.conf.task_serializer = content_type
-
-
-def message_from_args(args: Union[str, Dict[str, Any], List[Any]]) -> bytes:
-    """
-    Serialize arguments into their message equivalent.
-
-    Parameters:
-        args (dict): Task arguments.
-    """
-    return orjson.dumps(args, default=arg_to_json, option=orjson_opts)
-
-
-def message_to_args(
-    message: Union[bytes, str]
-) -> Union[str, Dict[str, Any], List[Any]]:
-    """
-    Deserialize a message into its python argument equivalent.
-
-    Parameters:
-        message (bytes | str): Message.
-    """
-    data = orjson.loads(message)
-
-    try:
-        args = data[0]
-        kwargs = data[1]
-
-        for arg_n, arg_v in enumerate(args):
-            args[arg_n] = arg_from_json(arg_v)
-
-        for arg_k, arg_v in kwargs.items():
-            kwargs[arg_k] = arg_from_json(arg_v)
-
-    except KeyError:
-        # celery to celery message
-        pass
-
-    return data
+        return args
 
 
 # --------------------------------------------------------------------------------------
