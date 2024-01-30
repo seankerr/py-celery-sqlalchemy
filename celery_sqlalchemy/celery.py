@@ -30,6 +30,7 @@ __SERIALIZER__: Optional[Serializer] = None
 def initialize(
     celery: Celery,
     serializer: Serializer,
+    apply_serializer: bool = True,
     content_type: str = "json+sqlalchemy",
 ) -> None:
     """
@@ -49,9 +50,10 @@ def initialize(
         "json",
     )
 
-    celery.conf.accept_content = [content_type]
-    celery.conf.result_accept_content = [content_type]
-    celery.conf.task_serializer = content_type
+    if apply_serializer:
+        celery.conf.accept_content = [content_type]
+        celery.conf.result_accept_content = [content_type]
+        celery.conf.task_serializer = content_type
 
     __SERIALIZER__ = serializer
 

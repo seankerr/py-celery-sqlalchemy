@@ -38,9 +38,9 @@ def test___init__(serialization: Mock) -> None:
         "json",
     )
 
-    celery.conf.accept_content = [content_type]
-    celery.conf.result_accept_content = [content_type]
-    celery.conf.task_serializer = [content_type]
+    assert celery.conf.accept_content == [content_type]
+    assert celery.conf.result_accept_content == [content_type]
+    assert celery.conf.task_serializer == content_type
 
     from celery_sqlalchemy.celery import __SERIALIZER__
 
@@ -48,12 +48,39 @@ def test___init__(serialization: Mock) -> None:
 
 
 @patch(f"{PATH}.serialization")
-def test___init___set_content_type(serialization: Mock) -> None:
+def test___init___set_apply_serializer__false(serialization: Mock) -> None:
     celery = Mock()
     serializer = Mock()
-    content_type = Mock()
 
-    initialize(celery, serializer, content_type)
+    celery.conf.accept_content = None
+    celery.conf.result_accept_content = None
+    celery.conf.task_serializer = None
+
+    initialize(celery, serializer, apply_serializer=False)
+
+    serialization.register.assert_called_with(
+        "json+sqlalchemy",
+        serialize,
+        deserialize,
+        "json",
+    )
+
+    assert not celery.conf.accept_content
+    assert not celery.conf.result_accept_content
+    assert not celery.conf.task_serializer
+
+
+@patch(f"{PATH}.serialization")
+def test___init___set_apply_serializer__true(serialization: Mock) -> None:
+    celery = Mock()
+    serializer = Mock()
+    content_type = "json+sqlalchemy"
+
+    celery.conf.accept_content = None
+    celery.conf.result_accept_content = None
+    celery.conf.task_serializer = None
+
+    initialize(celery, serializer, apply_serializer=True)
 
     serialization.register.assert_called_with(
         content_type,
@@ -62,9 +89,29 @@ def test___init___set_content_type(serialization: Mock) -> None:
         "json",
     )
 
-    celery.conf.accept_content = [content_type]
-    celery.conf.result_accept_content = [content_type]
-    celery.conf.task_serializer = [content_type]
+    assert celery.conf.accept_content == [content_type]
+    assert celery.conf.result_accept_content == [content_type]
+    assert celery.conf.task_serializer == content_type
+
+
+@patch(f"{PATH}.serialization")
+def test___init___set_content_type(serialization: Mock) -> None:
+    celery = Mock()
+    serializer = Mock()
+    content_type = Mock()
+
+    initialize(celery, serializer, content_type=content_type)
+
+    serialization.register.assert_called_with(
+        content_type,
+        serialize,
+        deserialize,
+        "json",
+    )
+
+    assert celery.conf.accept_content == [content_type]
+    assert celery.conf.result_accept_content == [content_type]
+    assert celery.conf.task_serializer == content_type
 
 
 def test_deserialize() -> None:
