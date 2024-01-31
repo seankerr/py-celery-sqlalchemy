@@ -44,10 +44,7 @@ class JsonSerializer(Serializer):
         Initialize the JSON module.
 
         Parameters:
-            celery (Celery): Celery instance.
             json_key (str): The key used to store the model path during serialization.
-            content_type (str): The content type to use for this serializer.
-            apply_serializer (bool): Apply the task serializer settings globally.
             naive_utc (bool): Enable orjson OPT_NAIVE_UTC.
             passthrough_dataclass (bool): Enable orjson OPT_PASSTHROUGH_DATACLASS.
             utc_z (bool): Enable orjson OPT_UTC_Z.
